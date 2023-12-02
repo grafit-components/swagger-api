@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "start": "npm run build && node dist/main",
-    "serve": "nodemon ./src/index.ts",
+    "serve": "nodemon",
     "build": "rimraf ./dist && tsc",
     "lint": "npx eslint ./src",
     "format": "npx eslint ./src --fix",
@@ -22,7 +22,10 @@
     "nodemon": "^3.0.2",
     "prettier": "^3.1.0",
     "rimraf": "^5.0.5",
-    "ts-node": "^10.9.1",
     "typescript": "^5.3.2"
+  },
+  "dependencies": {
+    "@apidevtools/swagger-parser": "^10.1.0",
+    "openapi-types": "^12.1.3"
   }
 }
