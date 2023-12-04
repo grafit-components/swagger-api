@@ -1,9 +1,18 @@
 import { test } from 'node:test';
-import { getDocument } from './document-file.provider.js';
+import {
+  getDocumentByPath,
+  getDocumentByUrl,
+} from './document-file.provider.js';
 import assert from 'node:assert';
 
-test('Fetch swagger.json', async () => {
+test('Fetch swagger.json', { skip: true }, async () => {
   const url = 'https://localhost:7182/swagger/v1/swagger.json';
-  const doc = await getDocument(url);
-  assert.equal(!!doc, true);
+  const document = await getDocumentByUrl(url);
+  assert.equal(!!document, true);
+});
+
+test('Read swagger.json', async () => {
+  const path = 'assets/swagger.json';
+  const document = await getDocumentByPath(path);
+  assert.equal(!!document, true);
 });
