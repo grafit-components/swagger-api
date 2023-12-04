@@ -1,21 +1,25 @@
-import { OpenAPIV2 } from 'openapi-types';
-
-const u = 'https://localhost:7182/swagger/v1/swagger.json';
+// import { OpenAPIV2 } from 'openapi-types';
+//
+// const u = 'https://localhost:7182/swagger/v1/swagger.json';
 
 // import { analytics } from './modules/analytics.js'
 // path.join
 // const u1 = 'http://petstore.swagger.io/v2/swagger.json';
 //
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+// process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+//
+// const r = await fetch(u);
+//
+// const document: OpenAPIV2.Document = (await r.json()) as OpenAPIV2.Document;
+//
+// const paths = Object.keys(document.paths);
+// console.log(document.paths[paths[0]].get?.security);
+//
+// console.log(document.tags);
 
-const r = await fetch(u);
-
-const document: OpenAPIV2.Document = (await r.json()) as OpenAPIV2.Document;
-
-const paths = Object.keys(document.paths);
-console.log(document.paths[paths[0]].get?.security);
-
-console.log(document.tags);
+export function sum(a: number, b: number) {
+  return a + b;
+}
 
 // console.log(document.definitions?.WeatherForecast.required);
 
