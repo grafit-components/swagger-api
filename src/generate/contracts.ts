@@ -1,5 +1,4 @@
 import { OpenAPIV3 } from 'openapi-types';
-import { makeContract } from '../templates/contract-template.js';
 
 export function makeContracts(document: OpenAPIV3.Document) {
   if (!document.components?.schemas) {
