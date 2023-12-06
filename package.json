@@ -7,10 +7,10 @@
   "scripts": {
     "start": "npm run build && node dist/main",
     "serve": "nodemon",
+    "test": "nodemon --config nodemon.test.json",
     "build": "rimraf ./dist && tsc",
     "lint": "npx eslint ./src",
-    "format": "npx eslint ./src --fix",
-    "test": "nodemon --config nodemon.test.json"
+    "format": "npx eslint ./src --fix"
   },
   "author": "",
   "license": "ISC",
