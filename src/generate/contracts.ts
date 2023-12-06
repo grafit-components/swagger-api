@@ -1,7 +1,55 @@
-import { OpenAPIV3_1 } from 'openapi-types';
+import { OpenAPIV3 } from 'openapi-types';
+import { makeContract } from '../templates/contract-template.js';
+
+export function makeContracts(document: OpenAPIV3.Document) {
+  if (!document.components?.schemas) {
+    throw Error('Components not contains in schemas');
+  }
+  const schemas = document.components.schemas;
+  const modules = makeEmptyModules(schemas);
+
+  // modules.forEach((module) => {
+  //   let content = '';
+  // });
+}
+
+function makeEmptyModules(schemas: {
+  [p: string]: OpenAPIV3.ReferenceObject | OpenAPIV3.SchemaObject;
+}) {
+  const schemaNames = Object.keys(schemas);
+  const modules = schemaNames.reduce((modules, schemaName) => {
+    const contract: Contract = {
+      name: getContractName(schemaName),
+      schemaName,
+    };
+
+    const moduleName = getModuleName(schemaName);
+
+    let module = modules.find((m) => m?.name === moduleName);
+    if (module) {
+      module.contracts.push(contract);
+    } else {
+      module = {
+        name: moduleName,
+        contracts: [contract],
+      };
+      modules.push(module);
+    }
+
+    // const contractStr = makeContract(
+    //   schemas[schemaName],
+    //   () => '',
+    //   contract.name,
+    // );
+
+    return modules;
+  }, [] as Module[]);
+
+  return modules;
+}
 
 export class Contracts {
-  constructor(private document: OpenAPIV3_1.Document) {
+  constructor(private document: OpenAPIV3.Document) {
     this.build();
   }
 
@@ -9,10 +57,6 @@ export class Contracts {
     if (!this.document.components?.schemas) {
       throw Error('Components not');
     }
-    const schemas = this.document.components.schemas;
-
-    const schemaNames = Object.keys(schemas);
-    getContractName(schemaNames[0]);
   }
 }
 
@@ -23,6 +67,7 @@ export function getModuleName(schemaName: string) {
 
   return name;
 }
+
 export function getContractName(schemaName: string): string {
   const name = schemaName.split('.').pop();
   if (name === undefined) {
@@ -30,6 +75,14 @@ export function getContractName(schemaName: string): string {
   }
   return name;
 }
+
 interface Module {
+  name: string;
+  contracts: Contract[];
+  content?: string;
+}
+
+interface Contract {
+  name: string;
   schemaName: string;
 }

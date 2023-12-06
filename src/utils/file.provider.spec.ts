@@ -1,8 +1,5 @@
 import { test } from 'node:test';
-import {
-  getDocumentByPath,
-  getDocumentByUrl,
-} from './document-file.provider.js';
+import { getDocumentByPath, getDocumentByUrl } from './file.provider.js';
 import assert from 'node:assert';
 
 test('Fetch swagger.json', { skip: true }, async () => {
