@@ -1,70 +1,92 @@
 import { OpenAPIV3 } from 'openapi-types';
+import { makeContract } from '../templates/contract-template.js';
+import { toKebabCase } from '../utils/string-converters.js';
 
 export function makeContracts(document: OpenAPIV3.Document) {
   if (!document.components?.schemas) {
     throw Error('Components not contains in schemas');
   }
   const schemas = document.components.schemas;
-  const modules = makeEmptyModules(schemas);
 
-  // modules.forEach((module) => {
-  //   let content = '';
-  // });
-}
-
-function makeEmptyModules(schemas: {
-  [p: string]: OpenAPIV3.ReferenceObject | OpenAPIV3.SchemaObject;
-}) {
   const schemaNames = Object.keys(schemas);
-  const modules = schemaNames.reduce((modules, schemaName) => {
-    const contract: Contract = {
-      name: getContractName(schemaName),
-      schemaName,
+  const contracts: Contracts = {
+    importsAll: '',
+    modules: [],
+  };
+
+  const modulesRaw = schemaNames.reduce(
+    (modules, schemaName) => {
+      const moduleName = getModuleName(schemaName);
+
+      const module = modules.find((m) => m?.name === moduleName);
+      if (module) {
+        module.schemaNames.push(schemaName);
+      } else {
+        modules.push({
+          name: moduleName,
+          schemaNames: [schemaName],
+        });
+        contracts.importsAll += makeImport(moduleName, schemaName);
+      }
+      return modules;
+    },
+    [] as { name: string; schemaNames: string[] }[],
+  );
+
+  modulesRaw.forEach((moduleRaw) => {
+    const makeRef = makeRefBuilder(moduleRaw.name);
+    const module: Module = {
+      name: moduleRaw.name,
+      content: contracts.importsAll,
     };
 
-    const moduleName = getModuleName(schemaName);
+    moduleRaw.schemaNames.forEach((schemaName) => {
+      module.content += makeContract(
+        schemas[schemaName],
+        makeRef,
+        getContractName(schemaName),
+      );
+    });
 
-    let module = modules.find((m) => m?.name === moduleName);
-    if (module) {
-      module.contracts.push(contract);
-    } else {
-      module = {
-        name: moduleName,
-        contracts: [contract],
-      };
-      modules.push(module);
-    }
+    contracts.modules.push(module);
+  });
 
-    // const contractStr = makeContract(
-    //   schemas[schemaName],
-    //   () => '',
-    //   contract.name,
-    // );
-
-    return modules;
-  }, [] as Module[]);
-
-  return modules;
+  return contracts;
 }
 
-export class Contracts {
-  constructor(private document: OpenAPIV3.Document) {
-    this.build();
-  }
-
-  private build() {
-    if (!this.document.components?.schemas) {
-      throw Error('Components not');
+function makeRefBuilder(
+  moduleName: string,
+): (component: OpenAPIV3.ReferenceObject) => string {
+  return (component: OpenAPIV3.ReferenceObject) => {
+    const base = '#/components/schemas/';
+    if (!component.$ref.startsWith(base)) {
+      throw 'Unknown ref';
     }
-  }
+    const schemaName = component.$ref.replace(base, '');
+    const contractName = getContractName(schemaName);
+    if (moduleName === getModuleName(schemaName)) {
+      return `${getModuleAliasName(schemaName)}.${contractName}`;
+    } else {
+      return contractName;
+    }
+  };
+}
+
+export function makeImport(moduleName: string, schemaName: string) {
+  return `import * as ${getModuleAliasName(
+    schemaName,
+  )} from './${moduleName}';\n`;
+}
+
+export function getModuleAliasName(schemaName: string) {
+  const name = schemaName.replace('.' + getContractName(schemaName), '');
+  return name.replace('.', '');
 }
 
 export function getModuleName(schemaName: string) {
-  const name = schemaName
-    .replace('.' + getContractName(schemaName), '')
-    .replace('Itsk.ER.', '');
+  const name = schemaName.replace('.' + getContractName(schemaName), '');
 
-  return name;
+  return toKebabCase(name);
 }
 
 export function getContractName(schemaName: string): string {
@@ -77,11 +99,10 @@ export function getContractName(schemaName: string): string {
 
 interface Module {
   name: string;
-  contracts: Contract[];
-  content?: string;
+  content: string;
 }
 
-interface Contract {
-  name: string;
-  schemaName: string;
+interface Contracts {
+  importsAll: string;
+  modules: Module[];
 }
