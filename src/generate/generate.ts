@@ -1,6 +1,7 @@
-import { Options } from './options.js';
 import { OpenAPIV3 } from 'openapi-types';
 import { getDocumentByPath, getDocumentByUrl } from '../utils/file.provider.js';
+import { makeContracts } from './contracts.js';
+import { Options } from './options.js';
 
 export async function generation(options: Options) {
   let document: OpenAPIV3.Document | undefined;
@@ -18,6 +19,8 @@ export async function generation(options: Options) {
   }
 
   checkDocument(document);
+
+  const contracts = makeContracts(document);
 
   return document;
 }
