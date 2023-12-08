@@ -1,70 +1,89 @@
-import {OpenAPIV3} from 'openapi-types';
-import {makeJsDoc} from './js-doc-template.js';
+import { OpenAPIV3 } from 'openapi-types';
+import { makeJsDoc } from './js-doc-template.js';
+import {
+  getContractName,
+  getModuleAliasName,
+  getModuleName,
+} from './names-template.js';
 
 export function makeContract(
-    component: OpenAPIV3.ReferenceObject | OpenAPIV3.SchemaObject,
-    makeRef: (component: OpenAPIV3.ReferenceObject) => string,
-    name?: string,
+  component: OpenAPIV3.ReferenceObject | OpenAPIV3.SchemaObject,
+  makeRef: (component: OpenAPIV3.ReferenceObject) => string,
+  name?: string,
 ) {
-    if ('$ref' in component) {
-        return makeRef(component);
-    }
+  if ('$ref' in component) {
+    return makeRef(component);
+  }
 
-    switch (component.type) {
-        case 'integer':
-        case 'number':
-            return makeNumber(component);
-        case 'array':
-            return makeArrayContract(component, makeRef);
-        case 'object':
-            return makeObject(component, makeRef, name);
-    }
+  switch (component.type) {
+    case 'integer':
+    case 'number':
+      return makeNumberType(component);
+    case 'array':
+      return makeArrayContract(component, makeRef);
+    case 'object':
+      return makeObject(component, makeRef, name);
+  }
 
+  return 'unknown';
 }
-
-// function makeRef(component: OpenAPIV3.ReferenceObject) {
-//   if (!component.$ref.startsWith('#/components/schemas/')) {
-//     throw 'Unknown ref';
-//   }
-//
-//   return '';
-// }
 
 export function makeArrayContract(
-    component: OpenAPIV3.ArraySchemaObject,
-    makeRef: (component: OpenAPIV3.ReferenceObject) => string,
+  component: OpenAPIV3.ArraySchemaObject,
+  makeRef: (component: OpenAPIV3.ReferenceObject) => string,
 ): string {
-    return `${makeContract(component.items, makeRef)}[]`;
+  return `${makeContract(component.items, makeRef)}[]`;
 }
 
-export function makeNumber(component: OpenAPIV3.BaseSchemaObject) {
-    return `number${component?.nullable ? ' | null' : ''}`;
+export function makeNumberType(component: OpenAPIV3.BaseSchemaObject) {
+  return `number${component?.nullable ? ' | null' : ''}`;
 }
 
 export function makeObject(
-    component: OpenAPIV3.NonArraySchemaObject,
-    makeRef: (component: OpenAPIV3.ReferenceObject) => string,
-    name?: string,
+  component: OpenAPIV3.NonArraySchemaObject,
+  makeRef: (component: OpenAPIV3.ReferenceObject) => string,
+  name?: string,
 ) {
-    const strings = [];
+  const strings = [];
 
-    if (name) {
-        strings.push(makeJsDoc(component));
-        strings.push(`export interface ${name} {`);
+  if (name) {
+    strings.push(makeJsDoc(component));
+    strings.push(`export interface ${name} {`);
+  } else {
+    strings.push('{');
+  }
+
+  if (component.properties) {
+    const fieldNames = Object.keys(component.properties);
+    fieldNames.forEach((fieldName) => {
+      const fieldComponent = component.properties![fieldName];
+      strings.push(makeJsDoc(fieldComponent));
+      strings.push(
+        `${fieldName}: ${makeContract(fieldComponent, makeRef)} \n\n`,
+      );
+    });
+  }
+
+  strings.push('}');
+
+  return strings.join('\n');
+}
+
+export function makeRefBuilder(
+  moduleName: string,
+): (component: OpenAPIV3.ReferenceObject) => string {
+  return (component: OpenAPIV3.ReferenceObject) => {
+    const base = '#/components/schemas/';
+    if (!component.$ref.startsWith(base)) {
+      throw 'Unknown ref';
+    }
+    const schemaName = component.$ref.replace(base, '');
+
+    const contractName = getContractName(schemaName);
+    if (moduleName === getModuleName(schemaName)) {
+      return contractName;
     } else {
-        strings.push('{');
+      return `${getModuleAliasName(schemaName)}.${contractName}`;
     }
-
-    if (component.properties) {
-        const fieldNames = Object.keys(component.properties);
-        fieldNames.forEach((fieldName) => {
-            const fieldComponent = component.properties![fieldName];
-            strings.push(makeJsDoc(fieldComponent));
-            strings.push(`${fieldName}: ${makeContract(fieldComponent, makeRef)}`);
-        });
-    }
-
-    strings.push('}');
-
-    return strings.join('\n');
+  };
 }

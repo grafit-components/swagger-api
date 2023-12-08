@@ -17,10 +17,6 @@
 //
 // console.log(document.tags);
 
-export function sum(a: number, b: number) {
-  return a + b;
-}
-
 // console.log(document.definitions?.WeatherForecast.required);
 
 // console.log(JSON.stringify(t));
@@ -36,3 +32,10 @@ export function sum(a: number, b: number) {
 // };
 //
 // f();
+
+import { generation } from './generate/generate.js';
+
+await generation({
+  path: './assets/swagger1.json',
+  outputFolder: './assets/test',
+});

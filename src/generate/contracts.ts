@@ -1,6 +1,10 @@
 import { OpenAPIV3 } from 'openapi-types';
-import { makeContract } from '../templates/contract-template.js';
-import { toKebabCase } from '../utils/string-converters.js';
+import {
+  makeContract,
+  makeRefBuilder,
+} from '../templates/contract-template.js';
+import { makeImport } from '../templates/import-template.js';
+import { getContractName, getModuleName } from '../templates/names-template.js';
 
 export function makeContracts(document: OpenAPIV3.Document) {
   if (!document.components?.schemas) {
@@ -41,60 +45,18 @@ export function makeContracts(document: OpenAPIV3.Document) {
     };
 
     moduleRaw.schemaNames.forEach((schemaName) => {
-      module.content += makeContract(
-        schemas[schemaName],
-        makeRef,
-        getContractName(schemaName),
-      );
+      module.content +=
+        makeContract(
+          schemas[schemaName],
+          makeRef,
+          getContractName(schemaName),
+        ) + '\n\n\n';
     });
 
     contracts.modules.push(module);
   });
 
   return contracts;
-}
-
-function makeRefBuilder(
-  moduleName: string,
-): (component: OpenAPIV3.ReferenceObject) => string {
-  return (component: OpenAPIV3.ReferenceObject) => {
-    const base = '#/components/schemas/';
-    if (!component.$ref.startsWith(base)) {
-      throw 'Unknown ref';
-    }
-    const schemaName = component.$ref.replace(base, '');
-    const contractName = getContractName(schemaName);
-    if (moduleName === getModuleName(schemaName)) {
-      return `${getModuleAliasName(schemaName)}.${contractName}`;
-    } else {
-      return contractName;
-    }
-  };
-}
-
-export function makeImport(moduleName: string, schemaName: string) {
-  return `import * as ${getModuleAliasName(
-    schemaName,
-  )} from './${moduleName}';\n`;
-}
-
-export function getModuleAliasName(schemaName: string) {
-  const name = schemaName.replace('.' + getContractName(schemaName), '');
-  return name.replace('.', '');
-}
-
-export function getModuleName(schemaName: string) {
-  const name = schemaName.replace('.' + getContractName(schemaName), '');
-
-  return toKebabCase(name);
-}
-
-export function getContractName(schemaName: string): string {
-  const name = schemaName.split('.').pop();
-  if (name === undefined) {
-    throw 'Incorrect scheme name';
-  }
-  return name;
 }
 
 interface Module {

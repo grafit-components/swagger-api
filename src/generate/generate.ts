@@ -1,5 +1,11 @@
+import path from 'node:path';
 import { OpenAPIV3 } from 'openapi-types';
-import { getDocumentByPath, getDocumentByUrl } from '../utils/file.provider.js';
+import { codeFormat } from '../utils/code-format.js';
+import {
+  getDocumentByPath,
+  getDocumentByUrl,
+  saveFile,
+} from '../utils/file.provider.js';
 import { makeContracts } from './contracts.js';
 import { Options } from './options.js';
 
@@ -21,6 +27,12 @@ export async function generation(options: Options) {
   checkDocument(document);
 
   const contracts = makeContracts(document);
+
+  contracts.modules.forEach(async (module) => {
+    const content = await codeFormat(module.content);
+    const fileName = path.join(options.outputFolder, `${module.name}.ts`);
+    await saveFile(fileName, content);
+  });
 
   return document;
 }
