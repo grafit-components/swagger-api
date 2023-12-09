@@ -11,6 +11,7 @@ export function makeJsDoc(
   }
 
   const object = component as OpenAPIV3.SchemaObject;
+  const description = object.description ?? '';
   const deprecated = object.deprecated ? '\n@deprecated\n' : '';
   const format = object.format ? `\n@format ${object.format}\n` : '';
   const minimum = object.minimum ? `\n@min ${object.minimum}\n` : '';
@@ -20,5 +21,10 @@ export function makeJsDoc(
     ? `\n@example ${JSON.stringify(object.example)}\n`
     : '';
 
-  return `/** ${object.description}${deprecated}${format}${minimum}${maximum}${pattern}${example} */`;
+  const summary = `${description}${deprecated}${format}${minimum}${maximum}${pattern}${example}`;
+
+  if (summary) {
+    return `/** ${summary} */`;
+  }
+  return '';
 }

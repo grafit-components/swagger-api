@@ -36,6 +36,6 @@
 import { generation } from './generate/generate.js';
 
 await generation({
-  path: './assets/swagger1.json',
+  path: './assets/swagger.json',
   outputFolder: './assets/test',
 });

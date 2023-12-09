@@ -1,7 +1,7 @@
-import { test } from 'node:test';
-import { makeContract } from './contract-template.js';
-import { OpenAPIV3 } from 'openapi-types';
 import assert from 'node:assert';
+import { test } from 'node:test';
+import { OpenAPIV3 } from 'openapi-types';
+import { makeContract, makeEnumType } from './contract-template.js';
 
 test('Contract. Object', () => {
   const obj: OpenAPIV3.SchemaObject = {
@@ -39,19 +39,27 @@ test('Contract. Object', () => {
 
   const exp = `{
 /** Наименование поля. */
-name: undefined
+name: string | null
+
 /** Идентификатор изменения.
 @format int64
  */
 changeSetId: number
+
+
 metaType: Itsk.ER.Grafit.Abstractions.Models.GtMetaType
+
 /** Новое значение. */
-newValue: undefined
+newValue: string | null
+
 /** Новое значение. */
-oldValue: undefined
+oldValue: string | null
+
 }`;
-  // assert.strictEqual(res, exp);
+
+  assert.strictEqual(res, exp);
 });
+
 function makeRef(component: OpenAPIV3.ReferenceObject) {
   if (!component.$ref.startsWith('#/components/schemas/')) {
     throw 'Unknown ref';
@@ -59,3 +67,24 @@ function makeRef(component: OpenAPIV3.ReferenceObject) {
 
   return component.$ref.replace('#/components/schemas/', '');
 }
+
+test('Contract. Enum', () => {
+  const obj: OpenAPIV3.SchemaObject & { 'x-enumNames': string[] } = {
+    enum: [0, 1],
+    type: 'integer',
+    description: 'Список системных объектов.',
+    format: 'int32',
+    'x-enumNames': ['First', 'Second'],
+  };
+
+  const res = makeEnumType(obj, 'EnumName');
+
+  const exp = `/** Список системных объектов.
+@format int32
+ */
+export enum EnumName {
+First = 0,
+Second = 1,
+}`;
+  assert.strictEqual(res, exp);
+});

@@ -18,7 +18,15 @@ export function makeContract(
   switch (component.type) {
     case 'integer':
     case 'number':
-      return makeNumberType(component);
+      if (component.enum) {
+        return makeEnumType(component, name);
+      } else {
+        return makeNumberType(component);
+      }
+    case 'string':
+      return makeStringType(component);
+    case 'boolean':
+      return makeBooleanType(component);
     case 'array':
       return makeArrayContract(component, makeRef);
     case 'object':
@@ -37,6 +45,34 @@ export function makeArrayContract(
 
 export function makeNumberType(component: OpenAPIV3.BaseSchemaObject) {
   return `number${component?.nullable ? ' | null' : ''}`;
+}
+function makeStringType(component: OpenAPIV3.NonArraySchemaObject) {
+  return `string${component?.nullable ? ' | null' : ''}`;
+}
+function makeBooleanType(component: OpenAPIV3.NonArraySchemaObject) {
+  return `boolean${component?.nullable ? ' | null' : ''}`;
+}
+
+export function makeEnumType(
+  component: OpenAPIV3.BaseSchemaObject,
+  name?: string,
+) {
+  const strings = [];
+  if (name) {
+    strings.push(makeJsDoc(component));
+    strings.push(`export enum ${name} {`);
+  } else {
+    throw 'Name enum required';
+  }
+
+  const values = component.enum!;
+  const names = (component as { 'x-enumNames': string[] })['x-enumNames'];
+  names.forEach((enumInemName, index) => {
+    strings.push(`${enumInemName} = ${values[index]},`);
+  });
+
+  strings.push('}');
+  return strings.join('\n');
 }
 
 export function makeObject(
@@ -58,13 +94,15 @@ export function makeObject(
     fieldNames.forEach((fieldName) => {
       const fieldComponent = component.properties![fieldName];
       strings.push(makeJsDoc(fieldComponent));
-      strings.push(
-        `${fieldName}: ${makeContract(fieldComponent, makeRef)} \n\n`,
-      );
+      strings.push(`${fieldName}: ${makeContract(fieldComponent, makeRef)}\n`);
     });
   }
 
-  strings.push('}');
+  if (!name && component.nullable) {
+    strings.push('} | null');
+  } else {
+    strings.push('}');
+  }
 
   return strings.join('\n');
 }
