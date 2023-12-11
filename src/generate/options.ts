@@ -21,4 +21,7 @@ export interface OptionsDoc<DocType extends OpenAPIV3.Document>
 export interface OptionsCommon {
   /** Folder with result generations. */
   outputFolder: string;
+
+  /** Don`t clear output folder before generation. */
+  suppressClearFolder?: boolean;
 }

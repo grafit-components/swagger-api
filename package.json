@@ -1,19 +1,31 @@
 {
   "name": "@grafit/swagger-to-api",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Generating typescript client from openapi",
+  "main": "./main.js",
   "type": "module",
+  "bin": {
+    "gt": "./main.js"
+  },
   "scripts": {
     "start": "npm run build && node dist/main",
     "serve": "nodemon",
     "test": "nodemon --config nodemon.test.json",
-    "build": "rimraf ./dist && tsc",
+    "build": "rimraf ./dist && tsc -p ./tsconfig.prod.json",
     "lint": "npx eslint ./src",
-    "format": "npx eslint ./src --fix"
+    "format": "npx eslint ./src --fix",
+    "gt": "gt"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Grafit Authors",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/grafit-components/swagger-api.git"
+  },
+  "bugs": {
+    "url": "https://github.com/grafit-components/swagger-api/issues"
+  },
+  "homepage": "https://github.com/grafit-components/swagger-api.git",
   "devDependencies": {
     "@types/node": "^20.10.2",
     "@typescript-eslint/eslint-plugin": "^6.13.1",
@@ -30,5 +42,9 @@
     "prettier": "^3.1.0",
     "prettier-plugin-jsdoc": "^1.1.1",
     "prettier-plugin-organize-imports": "^3.2.4"
+  },
+  "engines": {
+    "node": ">=18.10.0",
+    "npm": "^7.5.6 || >=8.0.0"
   }
 }
