@@ -24,4 +24,11 @@ export interface OptionsCommon {
 
   /** Don`t clear output folder before generation. */
   suppressClearFolder?: boolean;
+
+  /**
+   * Class name service endpoints
+   *
+   * @default 'api'
+   */
+  endpointsServiceName?: string;
 }

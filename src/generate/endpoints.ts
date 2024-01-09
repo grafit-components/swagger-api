@@ -1,16 +1,17 @@
 import { OpenAPIV3 } from 'openapi-types';
+import { Options } from './options.js';
 
-export function makeEndpoints(document: OpenAPIV3.Document) {
+export function makeEndpoints(document: OpenAPIV3.Document, options: Options) {
   const pathsObj = document.paths;
 
   const paths = Object.keys(pathsObj);
 
-  const strings = ['class {'];
+  const strings = [`class ${options.endpointsServiceName ?? 'Api'}Service {`];
 
-  console.log(paths);
-  // for (let i=0; i< strings.length; ) {
-  //   const tag = pathsObj[paths[i].
-  // }
+  // console.log(paths);
+  for (let i = 0; i < strings.length; ) {
+    const tag = pathsObj[paths[i]];
+  }
 
   strings.push('}');
 }

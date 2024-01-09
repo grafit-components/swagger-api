@@ -2,10 +2,10 @@
   "name": "@grafit/swagger-to-api",
   "version": "1.0.0",
   "description": "Generating typescript client from openapi",
-  "main": "./main.js",
   "type": "module",
+  "main": "dist/main.js",
   "bin": {
-    "gt": "./main.js"
+    "gt": "./dist/main.js"
   },
   "scripts": {
     "start": "npm run build && node dist/main",
@@ -13,8 +13,7 @@
     "test": "nodemon --config nodemon.test.json",
     "build": "rimraf ./dist && tsc -p ./tsconfig.prod.json",
     "lint": "npx eslint ./src",
-    "format": "npx eslint ./src --fix",
-    "gt": "gt"
+    "format": "npx eslint ./src --fix"
   },
   "author": "Grafit Authors",
   "license": "MIT",
@@ -46,5 +45,11 @@
   "engines": {
     "node": ">=18.10.0",
     "npm": "^7.5.6 || >=8.0.0"
-  }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "dist/"
+  ]
 }
