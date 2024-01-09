@@ -11,7 +11,8 @@
     "start": "npm run build && node dist/main",
     "serve": "nodemon",
     "test": "nodemon --config nodemon.test.json",
-    "build": "rimraf ./dist && tsc -p ./tsconfig.prod.json",
+    "build": "tsc -p ./tsconfig.prod.json",
+    "build-clear": "rimraf ./dist && tsc -p ./tsconfig.prod.json",
     "lint": "npx eslint ./src",
     "format": "npx eslint ./src --fix"
   },
