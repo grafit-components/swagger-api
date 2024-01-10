@@ -44,6 +44,7 @@ export async function generation(options: Options) {
     const fileName = path.join(options.outputFolder, `${module.name}.ts`);
     await saveFile(fileName, content);
   }
+  console.log(`Saved ${contracts.modules.length} modules`);
 }
 
 function checkDocument(document: OpenAPIV3.Document) {

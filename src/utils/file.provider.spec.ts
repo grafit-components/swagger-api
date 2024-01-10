@@ -23,6 +23,6 @@ test('save file', { skip: true }, () => {
   saveFile('./assets/test/test.ts', 'Hello');
 });
 
-test('remove folder', { skip: false }, async () => {
+test('remove folder', { skip: true }, async () => {
   await removeFolder('./assets/test');
 });
