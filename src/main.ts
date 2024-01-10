@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 // import { OpenAPIV2 } from 'openapi-types';
 //
 // const u = 'https://localhost:7182/swagger/v1/swagger.json';
@@ -35,7 +36,10 @@
 
 import { generation } from './generate/generate.js';
 
-await generation({
-  path: './assets/swagger.json',
-  outputFolder: './assets/test',
-});
+generation({
+  path: './../assets/swagger.json',
+  outputFolder: './../assets/test',
+}).then(
+  () => console.log('Finish'),
+  (reason) => console.error(reason),
+);

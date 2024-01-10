@@ -24,7 +24,7 @@ jobs:
 
       - run: |
           npm version ${{ github.ref_name }}
-          npm publish
+          npm publish --access public
         working-directory: ./dist
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

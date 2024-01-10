@@ -3,6 +3,7 @@ import { test } from 'node:test';
 import {
   getDocumentByPath,
   getDocumentByUrl,
+  removeFolder,
   saveFile,
 } from './file.provider.js';
 
@@ -20,4 +21,8 @@ test('Read swagger.json', { skip: true }, async () => {
 
 test('save file', { skip: true }, () => {
   saveFile('./assets/test/test.ts', 'Hello');
+});
+
+test('remove folder', { skip: false }, async () => {
+  await removeFolder('./assets/test');
 });

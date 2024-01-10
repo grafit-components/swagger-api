@@ -1,4 +1,4 @@
-import { access, mkdir, readFile, writeFile } from 'fs/promises';
+import { access, mkdir, readFile, rm, writeFile } from 'fs/promises';
 import path from 'node:path';
 
 export async function getDocumentByUrl<Type>(url: string): Promise<Type> {
@@ -23,4 +23,10 @@ export async function saveFile(fileName: string, content: string) {
   }
 
   await writeFile(fileName, content);
+}
+
+export async function removeFolder(path: string) {
+  try {
+    await rm(path, { recursive: true });
+  } catch (e) {}
 }

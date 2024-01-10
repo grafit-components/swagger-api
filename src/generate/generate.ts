@@ -4,6 +4,7 @@ import { codeFormat } from '../utils/code-format.js';
 import {
   getDocumentByPath,
   getDocumentByUrl,
+  removeFolder,
   saveFile,
 } from '../utils/file.provider.js';
 import { makeContracts } from './contracts.js';
@@ -13,8 +14,10 @@ export async function generation(options: Options) {
   let document: OpenAPIV3.Document | undefined;
 
   if ('url' in options) {
+    console.log('Download document from ' + options.url);
     document = await getDocumentByUrl(options.url);
   } else if ('path' in options) {
+    console.log('Read document ' + options.path);
     document = await getDocumentByPath(options.path);
   } else {
     document = options.doc;
@@ -25,16 +28,22 @@ export async function generation(options: Options) {
   }
 
   checkDocument(document);
+  console.log('Document received');
 
+  console.log('Generate contracts');
   const contracts = makeContracts(document);
 
-  contracts.modules.forEach(async (module) => {
+  if (!options.suppressClearFolder) {
+    console.log('Clear output folder');
+    await removeFolder(options.outputFolder);
+  }
+
+  console.log('Save contracts');
+  for (const module of contracts.modules) {
     const content = await codeFormat(module.content);
     const fileName = path.join(options.outputFolder, `${module.name}.ts`);
     await saveFile(fileName, content);
-  });
-
-  return document;
+  }
 }
 
 function checkDocument(document: OpenAPIV3.Document) {
