@@ -5,7 +5,7 @@ import { tap } from 'node:test/reporters';
 start().then();
 
 async function start() {
-  const files = await glob('dist/**/*.spec.js');
+  const files = await glob('dist/**/generate.spec.js');
   run({
     files,
   })

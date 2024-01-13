@@ -28,7 +28,14 @@ export interface OptionsCommon {
   /**
    * Class name service endpoints
    *
-   * @default 'api'
+   * @default 'Api'
    */
   endpointsServiceName?: string;
+
+  /**
+   * Urls path endpoints prefix
+   *
+   * @default 'api'
+   */
+  endpointsUrlPrefix?: string;
 }

@@ -1,50 +1,117 @@
 import { OpenAPIV3 } from 'openapi-types';
+import { makeEndpoint } from '../templates/endpoint-template';
 import { Options } from './options.js';
 
 export function makeEndpoints(document: OpenAPIV3.Document, options: Options) {
-  const pathsObj = document.paths;
+  const strings = [
+    `import { HttpClient } from '@angular/common/http';
+     import { Injectable } from '@angular/core';
+     
+    ${getJsDocForDocument(document)}
+    @Injectable({ providedIn: 'root' })
+    class ${options.endpointsServiceName ?? 'Api'}Service {`,
+  ];
 
-  const paths = Object.keys(pathsObj);
+  const groups = makeTagGroups(document);
+  groups.forEach((group) => {
+    strings.push(
+      `${getJsDocForTag(document, group.tag)}
+      ${makeEndpoint(group, options.endpointsUrlPrefix)}
+      `,
+    );
+  });
 
-  const strings = [`class ${options.endpointsServiceName ?? 'Api'}Service {`];
+  strings.push(`constructor(private http: HttpClient) {}    }`);
 
-  // console.log(paths);
-  for (let i = 0; i < strings.length; ) {
-    const tag = pathsObj[paths[i]];
-  }
-
-  strings.push('}');
+  return strings.join('\n');
 }
 
-// export function groupPaths(paths: string[]) {
-//   return paths.reduce((groups, path) => {
-//     const segments = path.split('/');
-//   }, [] as PathGroup[]);
-// }
+export function getJsDocForDocument(document: OpenAPIV3.Document) {
+  const desc = document.info.description
+    ? `\n@description ${document.info.description}`
+    : '';
+  return document.info.title ? `/** ${document.info.title} ${desc}*/` : '';
+}
 
-// interface PathGroup {
-//   path: string;
-//   child: PathGroup[];
-// }
+export function getJsDocForTag(document: OpenAPIV3.Document, tagName: string) {
+  const tag = document.tags?.find((t) => t.name === tagName);
+  return tag?.description ? `/** ${tag.description} */` : '';
+}
+
+export function makeTagGroups(document: OpenAPIV3.Document) {
+  const pathsObj = document.paths;
+  const paths = Object.keys(pathsObj);
+
+  const tagGroups = paths.reduce((groups, path) => {
+    const pathObj = pathsObj[path]!;
+    let group: TagGroupItem | undefined = undefined;
+    const methods = Object.keys(pathObj) as OpenAPIV3.HttpMethods[];
+
+    methods.forEach((method) => {
+      const operationObject = pathObj[method]!;
+      const tag = operationObject.tags?.at(0);
+      if (!tag) {
+        throw 'Tag in path required';
+      }
+
+      if (!group || group.tag !== tag) {
+        group = groups.find((g) => g.tag === tag);
+        if (!group) {
+          group = {
+            tag,
+            operations: [],
+          };
+          groups.push(group);
+        }
+      }
+
+      group.operations.push({
+        path,
+        method,
+        operationObject,
+        appendMethodToName: methods.length > 1,
+      });
+    });
+
+    return groups;
+  }, [] as TagGroupItem[]);
+
+  return tagGroups;
+}
+
+export interface TagGroupItem {
+  tag: string;
+  operations: TagOperation[];
+}
+
+export interface TagOperation {
+  path: string;
+  method: OpenAPIV3.HttpMethods;
+  operationObject: OpenAPIV3.OperationObject;
+  appendMethodToName: boolean;
+}
+
+// import { HttpClient } from '@angular/common/http';
+// import { Injectable } from '@angular/core';
 //
-// class Test {
-//   readonly Tag = {
-//     /** Test */
-//     path: '',
+// /** Test */
+// @Injectable({
+//   providedIn: 'root',
+// })
+// export class ApiService {
+//   /** Справочники ДО. */
+//   readonly affiliateDictionary = {
+//     /** Urls in controllers. */
+//     _paths: {
+//       /** Url controller. */
+//       controller: '/eraRepairs/AffiliateDictionary',
 //
-//     /** Comment */
-//     m: () => {},
+//       /** Получить справочник месторождений ДО пользователя. */
+//       getFields: '/eraRepairs/AffiliateDictionary/GetFields',
+//     },
 //   } as const;
-//   // readonly Tag = (() => {
-//   //
-//   //   return {
-//   //     function t(){
-//   //
-//   //   }
-//   //   }
-//   // })();
-// }
 //
-// class PathStr {
-//   constructor(public readonly path: string) {}
+//   constructor(private http: HttpClient) {
+//     const u = this.affiliateDictionary._paths.controller;
+//   }
 // }

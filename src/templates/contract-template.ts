@@ -108,7 +108,7 @@ export function makeObject(
 }
 
 export function makeRefBuilder(
-  moduleName: string,
+  moduleName?: string,
 ): (component: OpenAPIV3.ReferenceObject) => string {
   return (component: OpenAPIV3.ReferenceObject) => {
     const base = '#/components/schemas/';
@@ -118,7 +118,7 @@ export function makeRefBuilder(
     const schemaName = component.$ref.replace(base, '');
 
     const contractName = getContractName(schemaName);
-    if (moduleName === getModuleName(schemaName)) {
+    if (moduleName && moduleName === getModuleName(schemaName)) {
       return contractName;
     } else {
       return `${getModuleAliasName(schemaName)}.${contractName}`;

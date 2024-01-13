@@ -7,7 +7,9 @@ import {
   removeFolder,
   saveFile,
 } from '../utils/file.provider.js';
+import { toKebabCase } from '../utils/string-converters';
 import { makeContracts } from './contracts.js';
+import { makeEndpoints } from './endpoints';
 import { Options } from './options.js';
 
 export async function generation(options: Options) {
@@ -45,6 +47,19 @@ export async function generation(options: Options) {
     await saveFile(fileName, content);
   }
   console.log(`Saved ${contracts.modules.length} modules`);
+
+  console.log('Generate api service');
+  const apiServiceRaw = makeEndpoints(document, options);
+  const apiServiceWithImport = `${contracts.importsAll}\n${apiServiceRaw}`;
+  const apiServiceFormatted = await codeFormat(apiServiceWithImport);
+  const serviceName = path.join(
+    options.outputFolder,
+    toKebabCase(`${options.endpointsServiceName ?? 'api'}.service.ts`),
+  );
+  console.log('Save api service');
+  await saveFile(serviceName, apiServiceFormatted);
+
+  console.log('Completed');
 }
 
 function checkDocument(document: OpenAPIV3.Document) {
