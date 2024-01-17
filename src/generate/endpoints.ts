@@ -1,41 +1,11 @@
 import { OpenAPIV3 } from 'openapi-types';
-import { makeEndpoint } from '../templates/endpoint-template';
+import { makeService } from '../templates/endpoints/service-template';
 import { Options } from './options.js';
 
 export function makeEndpoints(document: OpenAPIV3.Document, options: Options) {
-  const strings = [
-    `import { HttpClient } from '@angular/common/http';
-     import { Injectable } from '@angular/core';
-     
-    ${getJsDocForDocument(document)}
-    @Injectable({ providedIn: 'root' })
-    class ${options.endpointsServiceName ?? 'Api'}Service {`,
-  ];
-
   const groups = makeTagGroups(document);
-  groups.forEach((group) => {
-    strings.push(
-      `${getJsDocForTag(document, group.tag)}
-      ${makeEndpoint(group, options.endpointsUrlPrefix)}
-      `,
-    );
-  });
 
-  strings.push(`constructor(private http: HttpClient) {}    }`);
-
-  return strings.join('\n');
-}
-
-export function getJsDocForDocument(document: OpenAPIV3.Document) {
-  const desc = document.info.description
-    ? `\n@description ${document.info.description}`
-    : '';
-  return document.info.title ? `/** ${document.info.title} ${desc}*/` : '';
-}
-
-export function getJsDocForTag(document: OpenAPIV3.Document, tagName: string) {
-  const tag = document.tags?.find((t) => t.name === tagName);
-  return tag?.description ? `/** ${tag.description} */` : '';
+  return makeService(document, options, groups);
 }
 
 export function makeTagGroups(document: OpenAPIV3.Document) {
@@ -90,28 +60,3 @@ export interface TagOperation {
   operationObject: OpenAPIV3.OperationObject;
   appendMethodToName: boolean;
 }
-
-// import { HttpClient } from '@angular/common/http';
-// import { Injectable } from '@angular/core';
-//
-// /** Test */
-// @Injectable({
-//   providedIn: 'root',
-// })
-// export class ApiService {
-//   /** Справочники ДО. */
-//   readonly affiliateDictionary = {
-//     /** Urls in controllers. */
-//     _paths: {
-//       /** Url controller. */
-//       controller: '/eraRepairs/AffiliateDictionary',
-//
-//       /** Получить справочник месторождений ДО пользователя. */
-//       getFields: '/eraRepairs/AffiliateDictionary/GetFields',
-//     },
-//   } as const;
-//
-//   constructor(private http: HttpClient) {
-//     const u = this.affiliateDictionary._paths.controller;
-//   }
-// }

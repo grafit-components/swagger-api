@@ -1,12 +1,18 @@
 import assert from 'node:assert';
 import { test } from 'node:test';
 import { OpenAPIV3 } from 'openapi-types';
-import { makeTagGroups } from './endpoints';
+import { getJsDocForDocument, getJsDocForTag } from './service-template';
 
-test('makeTagGroups', () => {
-  const groups = makeTagGroups(document);
+test('JsDoc for document', () => {
+  const jsDoc = getJsDocForDocument(document);
 
-  assert.strictEqual(groups.length, 2);
+  assert.strictEqual(jsDoc, '/** API ЭРА-Ремонты */');
+});
+
+test('JsDoc for tag', () => {
+  const jsDoc = getJsDocForTag(document, 'AffiliateDictionary');
+
+  assert.strictEqual(jsDoc, '/** Справочники ДО. */');
 });
 
 const document: OpenAPIV3.Document = {

@@ -2,9 +2,12 @@ import { OpenAPIV3 } from 'openapi-types';
 import {
   makeContract,
   makeRefBuilder,
-} from '../templates/contract-template.js';
-import { makeImport } from '../templates/import-template.js';
-import { getContractName, getModuleName } from '../templates/names-template.js';
+} from '../templates/contracts/contract-template.js';
+import { makeImport } from '../templates/contracts/import-template.js';
+import {
+  getContractName,
+  getModuleName,
+} from '../templates/contracts/names-template.js';
 
 export function makeContracts(document: OpenAPIV3.Document) {
   if (!document.components?.schemas) {

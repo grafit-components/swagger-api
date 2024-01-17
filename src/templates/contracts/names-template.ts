@@ -1,4 +1,4 @@
-import { toKebabCase } from '../utils/string-converters.js';
+import { toKebabCase } from '../../utils/string-converters.js';
 
 export function getModuleAliasName(schemaName: string) {
   const paths = schemaName.split('`').shift()!.split('.');
