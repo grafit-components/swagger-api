@@ -1,7 +1,7 @@
 import assert from 'node:assert';
 import { test } from 'node:test';
 import { OpenAPIV3 } from 'openapi-types';
-import { getJsDocParams, getMethodParams, getQueryParams } from './endpoints-params-template';
+import { getJsDocParams, getMethodParams, getQueryParams } from './endpoint-params-template';
 const parameters: (OpenAPIV3.ReferenceObject | OpenAPIV3.ParameterObject)[] = [
   {
     name: 'fromDate',
@@ -38,7 +38,7 @@ const parameters: (OpenAPIV3.ReferenceObject | OpenAPIV3.ParameterObject)[] = [
 test('getQueryParams', () => {
   const res = getQueryParams(parameters);
 
-  assert.strictEqual(res, 'params: { toDate, repairTypes },');
+  assert.strictEqual(res, 'params: { toDate, repairTypes }');
 });
 
 test('getMethodParams', () => {

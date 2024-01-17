@@ -8,7 +8,7 @@ export function getQueryParams(parameters?: (OpenAPIV3.ReferenceObject | OpenAPI
   const params = parameters
     .filter((param): param is OpenAPIV3.ParameterObject => !('$ref' in param) && param.in === 'query')
     .map((p) => p.name);
-  return params.length ? `params: { ${params.join(', ')} },` : '';
+  return params.length ? `params: { ${params.join(', ')} }` : '';
 }
 
 export function getMethodParams(parameters?: (OpenAPIV3.ReferenceObject | OpenAPIV3.ParameterObject)[]) {
@@ -25,7 +25,7 @@ export function getMethodParams(parameters?: (OpenAPIV3.ReferenceObject | OpenAP
       if (!param.schema) {
         return 'Unknown param type';
       }
-      return `${param.name}: ${makeContract(param.schema, makeRef)}${param.required ? '' : ' | undefined'}`;
+      return `${param.name}: ${makeContract(param.schema, makeRef)}${param.required ? '' : ' | undefined'}, `;
     })
     .join(', ');
 }
