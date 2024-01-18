@@ -1,12 +1,7 @@
 import path from 'node:path';
 import { OpenAPIV3 } from 'openapi-types';
 import { codeFormat } from '../utils/code-format.js';
-import {
-  getDocumentByPath,
-  getDocumentByUrl,
-  removeFolder,
-  saveFile,
-} from '../utils/file.provider.js';
+import { getDocumentByPath, getDocumentByUrl, removeFolder, saveFile } from '../utils/file.provider.js';
 import { toKebabCase } from '../utils/string-converters';
 import { makeContracts } from './contracts.js';
 import { makeEndpoints } from './endpoints';

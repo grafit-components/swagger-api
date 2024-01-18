@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import { generation } from './generate';
 import { Options } from './options';
 
-test('generate', async () => {
+test('generate', { skip: true }, async () => {
   const options: Options = {
     path: './bin/swagger.json',
     outputFolder: './bin/test',

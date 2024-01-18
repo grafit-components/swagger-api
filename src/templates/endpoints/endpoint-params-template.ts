@@ -27,7 +27,7 @@ export function getMethodParams(parameters?: (OpenAPIV3.ReferenceObject | OpenAP
       }
       return `${param.name}: ${makeContract(param.schema, makeRef)}${param.required ? '' : ' | undefined'}, `;
     })
-    .join(', ');
+    .join('');
 }
 
 export function getJsDocParams(parameters?: (OpenAPIV3.ReferenceObject | OpenAPIV3.ParameterObject)[]) {

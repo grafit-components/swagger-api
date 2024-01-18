@@ -2,6 +2,7 @@ import { TagGroupItem, TagOperation } from '../../generate/endpoints';
 import { toCamelCase, toPascalCase } from '../../utils/string-converters';
 import { getJsDocBody, getMethodBody } from './endpoint-body-template';
 import { getJsDocParams, getMethodParams, getQueryParams } from './endpoint-params-template';
+import { getMethodType } from './endpoint-response-template';
 
 export function makeEndpoint(tagGroupItem: TagGroupItem, endpointsUrlPrefix?: string) {
   const methods = tagGroupItem.operations.map((operation) => {
@@ -40,10 +41,21 @@ export function getMethod(operation: TagOperation, endpointsUrlPrefix: string | 
   if (body) {
     optionsArr.push('body');
   }
+  const additionalParam = `${operation.method === 'get' ? '_noCache=false, ' : ''}_options?: Options`;
 
-  const options = optionsArr.length ? `, { ${optionsArr.join(', ')} }` : '';
+  let methodType = getMethodType(operation.operationObject.responses);
+  if (methodType === '<string>') {
+    methodType = '';
+    optionsArr.push(`responseType: 'text'`);
+  }
 
-  return `(${params}${body}) => this.http.request<string>('${operation.method}', \`${url}\`${options}),`;
+  if (operation.method === 'get') {
+    optionsArr.push(`headers: _noCache === true ? this.noCacheHeaders : undefined`);
+  }
+
+  const options = optionsArr.length ? `, { ${optionsArr.join(', ')}, ..._options}` : `, _options`;
+
+  return `(${params}${body}${additionalParam}) => this.http.request${methodType}('${operation.method}', \`${url}\`${options}),`;
 }
 
 export function getMethodJsDoc(operation: TagOperation) {
@@ -55,5 +67,6 @@ export function getMethodJsDoc(operation: TagOperation) {
   const request = `\n@request ${operation.method}: ${operation.path}\n`;
   const params = getJsDocParams(operation.operationObject.parameters);
   const body = getJsDocBody(operation.operationObject.requestBody);
-  return `/** ${summary}${description}${deprecated}${request}${params}${body} */`;
+  return `/** ${summary}${description}${deprecated}${request}${params}${body}
+   ${operation.method === 'get' ? '@param _noCache Ignore cache.\n' : ''}@param _options Request options. */`;
 }

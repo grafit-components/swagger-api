@@ -46,7 +46,7 @@ test('getMethodParams', () => {
 
   assert.strictEqual(
     res,
-    'fromDate: string | undefined, toDate: string, repairTypes: ItskERWebModelRepair.RepairType[] | undefined',
+    'fromDate: string | undefined, toDate: string, repairTypes: ItskERWebModelRepair.RepairType[] | undefined, ',
   );
 });
 
