@@ -38,7 +38,7 @@ const parameters: (OpenAPIV3.ReferenceObject | OpenAPIV3.ParameterObject)[] = [
 test('getQueryParams', () => {
   const res = getQueryParams(parameters);
 
-  assert.strictEqual(res, 'params: { toDate, repairTypes }');
+  assert.strictEqual(res, 'params: new HttpParams({ fromObject: { toDate, repairTypes } })');
 });
 
 test('getMethodParams', () => {

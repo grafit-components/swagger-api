@@ -5,7 +5,7 @@ import { makeEndpoint } from './endpoint-template';
 
 export function makeService(document: OpenAPIV3.Document, options: Options, groups: TagGroupItem[]) {
   const strings = [
-    `import { HttpClient, HttpHeaders } from '@angular/common/http';
+    `import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
      import { Injectable } from '@angular/core';
      
     ${getJsDocForDocument(document)}
