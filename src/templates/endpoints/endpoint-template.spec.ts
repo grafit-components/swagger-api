@@ -18,6 +18,7 @@ test('makeEndpoint', () => {
    @param _noCache Ignore cache.
 @param _options Request options. */
     getFields: (affiliateId: number | undefined, _noCache=false, _options?: Options) => this.http.request<ItskERDictionaryAbstractionsModel.AffiliateDictionaryField[]>('get', \`api/eraRepairs/AffiliateDictionary/GetFields\`, { params: new HttpParams({ fromObject: { affiliateId } }), headers: _noCache === true ? this.noCacheHeaders : undefined, ..._options}),
+  _paths: { _controller: 'api/eraRepairs/AffiliateDictionary', getFields: '/eraRepairs/AffiliateDictionary/GetFields' }
   } as const;`,
   );
 });

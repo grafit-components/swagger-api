@@ -2,9 +2,10 @@ import { TagGroupItem, TagOperation } from '../../generate/endpoints';
 import { toCamelCase, toPascalCase } from '../../utils/string-converters';
 import { getJsDocBody, getMethodBody } from './endpoint-body-template';
 import { getJsDocParams, getMethodParams, getQueryParams } from './endpoint-params-template';
+import { makePaths } from './endpoint-paths-template';
 import { getMethodType } from './endpoint-response-template';
 
-export function makeEndpoint(tagGroupItem: TagGroupItem, endpointsUrlPrefix?: string) {
+export function makeEndpoint(tagGroupItem: TagGroupItem, endpointsUrlPrefix = 'api') {
   const methods = tagGroupItem.operations.map((operation) => {
     if (!operation.path.includes(`/${tagGroupItem.tag}/`)) {
       // Пропускаются все роуты которые не содержат в пути тег (скорее всего они избыточны)
@@ -15,10 +16,12 @@ export function makeEndpoint(tagGroupItem: TagGroupItem, endpointsUrlPrefix?: st
     ${getMethodName(tagGroupItem.tag, operation)}: ${getMethod(operation, endpointsUrlPrefix)}`;
   });
   const methodStr = methods.filter((f) => f).join('\n\n');
+  const paths = makePaths(tagGroupItem, endpointsUrlPrefix);
   const controllerName = toCamelCase(tagGroupItem.tag);
 
   return `readonly ${controllerName} = {
   ${methodStr}
+  ${paths}
   } as const;`;
 }
 
@@ -27,9 +30,9 @@ export function getMethodName(tag: string, operation: TagOperation) {
   return `${toCamelCase(name)}${operation.appendMethodToName ? toPascalCase(operation.method) : ''}`;
 }
 
-export function getMethod(operation: TagOperation, endpointsUrlPrefix: string | undefined) {
+export function getMethod(operation: TagOperation, endpointsUrlPrefix: string) {
   const optionsArr = [];
-  const url = (endpointsUrlPrefix ?? 'api') + operation.path.replace(/\{/g, '${');
+  const url = endpointsUrlPrefix + operation.path.replace(/\{/g, '${');
 
   const params = getMethodParams(operation.operationObject.parameters);
   if (params) {
