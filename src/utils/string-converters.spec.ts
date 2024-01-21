@@ -25,3 +25,11 @@ test('toPascalCase', () => {
 
   assert.strictEqual(kebabCase, 'Get');
 });
+
+test('toPascalCase from kebab', () => {
+  const str = 'itsk.er.job-order.model.work-act-report-model';
+
+  const kebabCase = toPascalCase(str);
+
+  assert.strictEqual(kebabCase, 'ItskErJobOrderModelWorkActReportModel');
+});

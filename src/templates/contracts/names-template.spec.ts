@@ -1,10 +1,6 @@
 import assert from 'node:assert';
 import { test } from 'node:test';
-import {
-  getContractName,
-  getModuleAliasName,
-  getModuleName,
-} from './names-template.js';
+import { getContractName, getModuleAliasName, getModuleName } from './names-template.js';
 
 test('getContractName', () => {
   const shcemeName = 'Itsk.ER.Grafit.Abstractions.Models.GtChange';
@@ -15,8 +11,7 @@ test('getContractName', () => {
 });
 
 test('getContractName with generic', () => {
-  const shcemeName =
-    'Itsk.ER.JobOrder.Model.WorkActReportModel.Record.ValueT`1[System.String]';
+  const shcemeName = 'Itsk.ER.JobOrder.Model.WorkActReportModel.Record.ValueT`1[System.String]';
   const contractName = getContractName(shcemeName);
 
   assert.strictEqual(contractName, 'ValueT_1SystemString');
@@ -46,15 +41,11 @@ test('getModuleName', () => {
 });
 
 test('getModuleName with generic', () => {
-  const shcemeName =
-    'Itsk.ER.JobOrder.Model.WorkActReportModel.Record.ValueT`1[System.String]';
+  const shcemeName = 'Itsk.ER.JobOrder.Model.WorkActReportModel.Record.ValueT`1[System.String]';
 
   const contractName = getModuleName(shcemeName);
 
-  assert.strictEqual(
-    contractName,
-    'itsk.er.job-order.model.work-act-report-model.record',
-  );
+  assert.strictEqual(contractName, 'itsk.er.job-order.model.work-act-report-model.record');
 });
 
 test('getModuleName with subclass', () => {
@@ -66,9 +57,17 @@ test('getModuleName with subclass', () => {
 });
 
 test('getModuleAliasName', () => {
+  const shcemeName = 'Itsk.Er.Grafit.Abstractions.Models.GtChange';
+
+  const alias = getModuleAliasName(shcemeName);
+
+  assert.strictEqual(alias, 'ItskErGrafitAbstractionsModels');
+});
+
+test('getModuleAliasName from kebab case', () => {
   const shcemeName = 'Itsk.ER.Grafit.Abstractions.Models.GtChange';
 
   const alias = getModuleAliasName(shcemeName);
 
-  assert.strictEqual(alias, 'ItskERGrafitAbstractionsModels');
+  assert.strictEqual(alias, 'ItskErGrafitAbstractionsModels');
 });

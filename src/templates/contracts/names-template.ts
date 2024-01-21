@@ -1,9 +1,8 @@
-import { toKebabCase } from '../../utils/string-converters.js';
+import { toKebabCase, toPascalCase } from '../../utils/string-converters.js';
 
 export function getModuleAliasName(schemaName: string) {
-  const paths = schemaName.split('`').shift()!.split('.');
-  paths.pop();
-  return paths.join('');
+  const moduleName = getModuleName(schemaName);
+  return toPascalCase(moduleName);
 }
 
 export function getModuleName(schemaName: string) {
