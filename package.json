@@ -8,7 +8,8 @@
   "scripts": {
     "start": "npm run build && node dist/main",
     "serve": "nodemon",
-    "test": "nodemon --config nodemon.test.json",
+    "serve:test": "nodemon --config nodemon.test.json",
+    "test": "tsc && node ./dist/test",
     "build": "tsc -p ./tsconfig.prod.json && npm run copy-pcg",
     "copy-pcg": "node -e \"require('fs').copyFile('package.json', 'dist/package.json', function(err) { })\"",
     "lint": "npx eslint ./src",
