@@ -7,7 +7,7 @@ export function getQueryParams(parameters?: (OpenAPIV3.ReferenceObject | OpenAPI
   }
   const params = parameters
     .filter((param): param is OpenAPIV3.ParameterObject => !('$ref' in param) && param.in === 'query')
-    .map((p) => p.name);
+    .map((p) => `${p.name}${p.required ? '' : `: ${p.name} ?? ''`}`);
   return params.length ? `params: new HttpParams({ fromObject: { ${params.join(', ')} } })` : '';
 }
 

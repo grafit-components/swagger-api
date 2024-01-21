@@ -9,7 +9,7 @@ export function makePaths(tagGroupItem: TagGroupItem, endpointsUrlPrefix: string
     if (!controller && path.includes(`/${tag}/`)) {
       controller = `_controller: '${endpointsUrlPrefix}${path.split(`/${tag}/`)[0]}/${tag}', `;
     }
-    return `${getPathName(tag, path)}: '${path}'`;
+    return `${getPathName(tag, path)}: '${endpointsUrlPrefix}${path}'`;
   });
 
   return `_paths: { ${controller}${paths.join(', ')} }`;

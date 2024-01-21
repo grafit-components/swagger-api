@@ -10,7 +10,7 @@ export function makeService(document: OpenAPIV3.Document, options: Options, grou
      
     ${getJsDocForDocument(document)}
     @Injectable({ providedIn: 'root' })
-    class ${options.endpointsServiceName ?? 'Api'}Service {`,
+    export class ${options.endpointsServiceName ?? 'Api'}Service {`,
   ];
 
   groups.forEach((group) => {

@@ -6,14 +6,14 @@ import { makePaths } from './endpoint-paths-template';
 import { getMethodType } from './endpoint-response-template';
 
 export function makeEndpoint(tagGroupItem: TagGroupItem, endpointsUrlPrefix = 'api') {
+  const tag = tagGroupItem.tag;
   const methods = tagGroupItem.operations.map((operation) => {
-    if (!operation.path.includes(`/${tagGroupItem.tag}/`)) {
+    if (!operation.path.includes(`/${tag}/`)) {
       // Пропускаются все роуты которые не содержат в пути тег (скорее всего они избыточны)
       console.log(`Skip operation: ${operation.path}`);
       return '';
     }
-    return `${getMethodJsDoc(operation)}
-    ${getMethodName(tagGroupItem.tag, operation)}: ${getMethod(operation, endpointsUrlPrefix)}`;
+    return getMethod(tag, operation, endpointsUrlPrefix);
   });
   const methodStr = methods.filter((f) => f).join('\n\n');
   const paths = makePaths(tagGroupItem, endpointsUrlPrefix);
@@ -30,7 +30,7 @@ export function getMethodName(tag: string, operation: TagOperation) {
   return `${toCamelCase(name)}${operation.appendMethodToName ? toPascalCase(operation.method) : ''}`;
 }
 
-export function getMethod(operation: TagOperation, endpointsUrlPrefix: string) {
+export function getMethod(tag: string, operation: TagOperation, endpointsUrlPrefix: string) {
   const optionsArr = [];
   const url = endpointsUrlPrefix + operation.path.replace(/\{/g, '${');
 
@@ -44,24 +44,34 @@ export function getMethod(operation: TagOperation, endpointsUrlPrefix: string) {
   if (body) {
     optionsArr.push('body');
   }
-  const additionalParam = `${operation.method === 'get' ? '_noCache=false, ' : ''}_options?: Options`;
+  if (operation.method === 'get') {
+    optionsArr.push(`headers: _noCache ? this.noCacheHeaders : undefined`);
+  }
+  let additionalParam = operation.method === 'get' ? '_noCache=false, ' : '';
+  let withOptions = false;
 
   let methodType = getMethodType(operation.operationObject.responses);
-  if (methodType === '<string>') {
-    methodType = '';
-    optionsArr.push(`responseType: 'text'`);
+  switch (methodType) {
+    case '':
+      withOptions = true;
+      additionalParam += '_options?: Options';
+      optionsArr.push('..._options');
+      break;
+    case '<string>':
+      methodType = '';
+      optionsArr.push(`responseType: 'text'`);
+      break;
   }
 
-  if (operation.method === 'get') {
-    optionsArr.push(`headers: _noCache === true ? this.noCacheHeaders : undefined`);
-  }
+  const options = optionsArr.length ? `, { ${optionsArr.join(', ')} }` : '';
 
-  const options = optionsArr.length ? `, { ${optionsArr.join(', ')}, ..._options}` : `, _options`;
+  const request = `this.http.request${methodType}('${operation.method}', \`${url}\`${options})`;
 
-  return `(${params}${body}${additionalParam}) => this.http.request${methodType}('${operation.method}', \`${url}\`${options}),`;
+  return `${getMethodJsDoc(operation, withOptions)}
+    ${getMethodName(tag, operation)}: (${params}${body}${additionalParam}) => ${request},`;
 }
 
-export function getMethodJsDoc(operation: TagOperation) {
+export function getMethodJsDoc(operation: TagOperation, withOptions: boolean) {
   const summary = operation.operationObject.summary ? `${operation.operationObject.summary}\n` : '';
   const description = operation.operationObject.description
     ? `\n@description ${operation.operationObject.description}\n`
@@ -71,5 +81,7 @@ export function getMethodJsDoc(operation: TagOperation) {
   const params = getJsDocParams(operation.operationObject.parameters);
   const body = getJsDocBody(operation.operationObject.requestBody);
   return `/** ${summary}${description}${deprecated}${request}${params}${body}
-   ${operation.method === 'get' ? '@param _noCache Ignore cache.\n' : ''}@param _options Request options. */`;
+   ${operation.method === 'get' ? '@param _noCache Ignore cache.\n' : ''}${
+     withOptions ? '@param _options Request options.' : ''
+   } */`;
 }
