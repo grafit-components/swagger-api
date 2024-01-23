@@ -1,10 +1,6 @@
 import { OpenAPIV3 } from 'openapi-types';
 import { makeJsDoc } from './js-doc-template.js';
-import {
-  getContractName,
-  getModuleAliasName,
-  getModuleName,
-} from './names-template.js';
+import { getContractName, getModuleAliasName, getModuleName } from './names-template.js';
 
 export function makeContract(
   component: OpenAPIV3.ReferenceObject | OpenAPIV3.SchemaObject,
@@ -53,10 +49,7 @@ function makeBooleanType(component: OpenAPIV3.NonArraySchemaObject) {
   return `boolean${component?.nullable ? ' | null' : ''}`;
 }
 
-export function makeEnumType(
-  component: OpenAPIV3.BaseSchemaObject,
-  name?: string,
-) {
+export function makeEnumType(component: OpenAPIV3.BaseSchemaObject, name?: string) {
   const strings = [];
   if (name) {
     strings.push(makeJsDoc(component));
@@ -67,9 +60,13 @@ export function makeEnumType(
 
   const values = component.enum!;
   const names = (component as { 'x-enumNames': string[] })['x-enumNames'];
-  names.forEach((enumInemName, index) => {
-    strings.push(`${enumInemName} = ${values[index]},`);
-  });
+  if (values.length === names.length) {
+    names.forEach((enumInemName, index) => {
+      strings.push(`${enumInemName} = ${values[index]},`);
+    });
+  } else {
+    console.log('Invalid enum ' + name);
+  }
 
   strings.push('}');
   return strings.join('\n');
@@ -107,9 +104,7 @@ export function makeObject(
   return strings.join('\n');
 }
 
-export function makeRefBuilder(
-  moduleName?: string,
-): (component: OpenAPIV3.ReferenceObject) => string {
+export function makeRefBuilder(moduleName?: string): (component: OpenAPIV3.ReferenceObject) => string {
   return (component: OpenAPIV3.ReferenceObject) => {
     const base = '#/components/schemas/';
     if (!component.$ref.startsWith(base)) {
