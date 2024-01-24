@@ -1,5 +1,5 @@
 import assert from 'node:assert';
-import { test } from 'node:test';
+import { describe, test } from 'node:test';
 import { OpenAPIV3 } from 'openapi-types';
 import { getJsDocParams, getMethodParams, getQueryParams } from './endpoint-params-template';
 const parameters: (OpenAPIV3.ReferenceObject | OpenAPIV3.ParameterObject)[] = [
@@ -35,28 +35,30 @@ const parameters: (OpenAPIV3.ReferenceObject | OpenAPIV3.ParameterObject)[] = [
   },
 ];
 
-test('getQueryParams', () => {
-  const res = getQueryParams(parameters);
+describe('endpoint-params-template', () => {
+  test('getQueryParams', () => {
+    const res = getQueryParams(parameters);
 
-  assert.strictEqual(res, 'params: new HttpParams({ fromObject: { toDate, repairTypes } })');
-});
+    assert.strictEqual(res, "params: new HttpParams({ fromObject: { toDate, repairTypes: repairTypes ?? '' } })");
+  });
 
-test('getMethodParams', () => {
-  const res = getMethodParams(parameters);
+  test('getMethodParams', () => {
+    const res = getMethodParams(parameters);
 
-  assert.strictEqual(
-    res,
-    'fromDate: string | undefined, toDate: string, repairTypes: ItskERWebModelRepair.RepairType[] | undefined, ',
-  );
-});
+    assert.strictEqual(
+      res,
+      'fromDate: string | undefined, toDate: string, repairTypes: ItskErWebModelRepair.RepairType[] | undefined, ',
+    );
+  });
 
-test('getJsDocParams', () => {
-  const res = getJsDocParams(parameters);
+  test('getJsDocParams', () => {
+    const res = getJsDocParams(parameters);
 
-  assert.strictEqual(
-    res,
-    `@param fromDate Дата начала периода. IN:path format:date-time
+    assert.strictEqual(
+      res,
+      `@param fromDate Дата начала периода. IN:path format:date-time
 @param toDate Дата окончания периода. IN:query format:date-time
 @param repairTypes Типы ремонтов. IN:query`,
-  );
+    );
+  });
 });

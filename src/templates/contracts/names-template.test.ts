@@ -14,14 +14,14 @@ test('getContractName with generic', () => {
   const shcemeName = 'Itsk.ER.JobOrder.Model.WorkActReportModel.Record.ValueT`1[System.String]';
   const contractName = getContractName(shcemeName);
 
-  assert.strictEqual(contractName, 'ValueT_1SystemString');
+  assert.strictEqual(contractName, 'ValueT_1OfSystemString');
 });
 
 test('getContractName with 2 generic', () => {
   const shcemeName = 'System.ValueTuple`2[System.Int64,System.String]';
   const contractName = getContractName(shcemeName);
 
-  assert.strictEqual(contractName, 'ValueTuple_2SystemInt64_SystemString');
+  assert.strictEqual(contractName, 'ValueTuple_2OfSystemInt64_SystemString');
 });
 
 test('getContractName with subclass', () => {

@@ -5,5 +5,5 @@
     "events": {
       "start": "node -e console.clear()"
     },
-    "exec": "tsc && node ./dist/test"
+    "exec": "tsc && node --test"
   }

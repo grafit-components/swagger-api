@@ -9,11 +9,12 @@
     "start": "npm run build && node dist/main",
     "serve": "nodemon",
     "serve:test": "nodemon --config nodemon.test.json",
-    "test": "tsc && node ./dist/test",
+    "test": "node --test",
     "build": "tsc -p ./tsconfig.prod.json && npm run copy-pcg",
     "copy-pcg": "node -e \"require('fs').copyFile('package.json', 'dist/package.json', function(err) { })\"",
     "lint": "npx eslint ./src",
-    "format": "npx eslint ./src --fix"
+    "format": "npx eslint ./src --fix",
+    "link-run": "swagger-api -p ./bin/swagger.json -o ./bin/test"
   },
   "homepage": "https://github.com/grafit-components/swagger-api.git",
   "devDependencies": {

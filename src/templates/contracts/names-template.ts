@@ -26,7 +26,7 @@ export function getContractName(schemaName: string): string {
     .join('_')
     .replace(/,/g, '_')
     .replace(/\]/g, '')
-    .replace(/\[/g, '')
+    .replace(/\[/g, 'Of')
     .replace(/\./g, '')
     .replace(/\+/g, '');
 }

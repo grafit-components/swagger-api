@@ -1,26 +1,27 @@
 import assert from 'node:assert';
-import { test } from 'node:test';
+import { describe, it } from 'node:test';
 import { OpenAPIV3 } from 'openapi-types';
 import { TagGroupItem } from '../../generate/endpoints';
 import { makeEndpoint } from './endpoint-template';
 import HttpMethods = OpenAPIV3.HttpMethods;
+describe('names-template', () => {
+  it('makeEndpoint', () => {
+    const res = makeEndpoint(testGroup);
 
-test('makeEndpoint', () => {
-  const res = makeEndpoint(testGroup);
-
-  assert.strictEqual(
-    res,
-    `readonly affiliateDictionary = {
+    assert.strictEqual(
+      res,
+      `readonly affiliateDictionary = {
   /** Получить справочник месторождений ДО пользователя.
 
 @request get: /eraRepairs/AffiliateDictionary/GetFields
 @param affiliateId Идентификатор ДО. IN:query format:int64
    @param _noCache Ignore cache.
-@param _options Request options. */
-    getFields: (affiliateId: number | undefined, _noCache=false, _options?: Options) => this.http.request<ItskERDictionaryAbstractionsModel.AffiliateDictionaryField[]>('get', \`api/eraRepairs/AffiliateDictionary/GetFields\`, { params: new HttpParams({ fromObject: { affiliateId } }), headers: _noCache === true ? this.noCacheHeaders : undefined, ..._options}),
-  _paths: { _controller: 'api/eraRepairs/AffiliateDictionary', getFields: '/eraRepairs/AffiliateDictionary/GetFields' }
+ */
+    getFields: (affiliateId: number | undefined, _noCache=false, ) => this.http.request<ItskErDictionaryAbstractionsModel.AffiliateDictionaryField[]>('get', \`api/eraRepairs/AffiliateDictionary/GetFields\`, { params: new HttpParams({ fromObject: { affiliateId: affiliateId ?? '' } }), headers: _noCache ? this.noCacheHeaders : undefined }),
+  _paths: { _controller: 'api/eraRepairs/AffiliateDictionary', getFields: 'api/eraRepairs/AffiliateDictionary/GetFields' }
   } as const;`,
-  );
+    );
+  });
 });
 
 const testGroup: TagGroupItem = {
