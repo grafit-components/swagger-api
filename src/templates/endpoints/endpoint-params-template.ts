@@ -25,7 +25,9 @@ export function getMethodParams(parameters?: (OpenAPIV3.ReferenceObject | OpenAP
       if (!param.schema) {
         return 'Unknown param type';
       }
-      return `${param.name}: ${makeContract(param.schema, makeRef)}${param.required ? '' : ' | undefined'}, `;
+      return `${param.name}: ${makeContract(param.schema, makeRef, undefined, true)}${
+        param.required ? '' : ' | undefined'
+      }, `;
     })
     .join('');
 }

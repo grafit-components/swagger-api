@@ -5,7 +5,8 @@ import { getContractName, getModuleAliasName, getModuleName } from './names-temp
 export function makeContract(
   component: OpenAPIV3.ReferenceObject | OpenAPIV3.SchemaObject,
   makeRef: (component: OpenAPIV3.ReferenceObject) => string,
-  name?: string,
+  name: string | undefined = undefined,
+  datesAsString = false,
 ) {
   if ('$ref' in component) {
     return makeRef(component);
@@ -20,7 +21,7 @@ export function makeContract(
         return makeNumberType(component);
       }
     case 'string':
-      return makeStringType(component);
+      return makeStringType(component, datesAsString);
     case 'boolean':
       return makeBooleanType(component);
     case 'array':
@@ -42,8 +43,9 @@ export function makeArrayContract(
 export function makeNumberType(component: OpenAPIV3.BaseSchemaObject) {
   return `number${component?.nullable ? ' | null' : ''}`;
 }
-function makeStringType(component: OpenAPIV3.NonArraySchemaObject) {
-  return `string${component?.nullable ? ' | null' : ''}`;
+export function makeStringType(component: OpenAPIV3.NonArraySchemaObject, datesAsString: boolean) {
+  const type = !datesAsString && component.format === 'date-time' ? 'Date' : 'string';
+  return `${type}${component?.nullable ? ' | null' : ''}`;
 }
 function makeBooleanType(component: OpenAPIV3.NonArraySchemaObject) {
   return `boolean${component?.nullable ? ' | null' : ''}`;
