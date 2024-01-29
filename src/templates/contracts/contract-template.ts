@@ -62,9 +62,11 @@ export function makeEnumType(component: OpenAPIV3.BaseSchemaObject, name?: strin
 
   const values = component.enum!;
   const names = (component as { 'x-enumNames': string[] })['x-enumNames'];
+  const summaries = (component as { 'x-enumSummaries': string[] })['x-enumSummaries'] ?? [];
   if (values.length === names.length) {
     names.forEach((enumInemName, index) => {
-      strings.push(`${enumInemName} = ${values[index]},`);
+      const summary = summaries[index] ? `\n\n/** ${summaries[index]} */\n` : '';
+      strings.push(`${summary}${enumInemName} = ${values[index]},`);
     });
   } else {
     console.log('Invalid enum ' + name);
