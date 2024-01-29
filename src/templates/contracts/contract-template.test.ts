@@ -48,7 +48,7 @@ name: string | null
 changeSetId: number
 
 
-metaType: Itsk.ER.Grafit.Abstractions.Models.GtMetaType
+metaType: Itsk.ER.Grafit.Abstractions.Models.GtMetaType | null
 
 /** Новое значение. */
 newValue: string | null

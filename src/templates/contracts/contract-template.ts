@@ -7,12 +7,15 @@ export interface MakeContractParam {
   makeRef: (component: OpenAPIV3.ReferenceObject) => string;
   name?: string;
   datesAsString?: boolean;
+  isObjectProp?: boolean;
 }
 
 export function makeContract(param: MakeContractParam) {
   const { component, makeRef, name } = param;
   if ('$ref' in component) {
-    return makeRef(component);
+    // для ссылок в полях объекта нет возможности понять обязательность поля, поэтому все nullable
+    const isNullable = param.isObjectProp ? ' | null' : '';
+    return makeRef(component) + isNullable;
   }
 
   switch (component.type) {
@@ -98,7 +101,7 @@ export function makeObject(
     fieldNames.forEach((fieldName) => {
       const fieldComponent = component.properties![fieldName];
       strings.push(makeJsDoc(fieldComponent));
-      strings.push(`${fieldName}: ${makeContract({ component: fieldComponent, makeRef })}\n`);
+      strings.push(`${fieldName}: ${makeContract({ component: fieldComponent, makeRef, isObjectProp: true })}\n`);
     });
   }
 
