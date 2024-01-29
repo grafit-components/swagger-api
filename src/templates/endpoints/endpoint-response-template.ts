@@ -7,7 +7,7 @@ export function getMethodType(responses: OpenAPIV3.ResponsesObject) {
     const schema = response.content['application/json']?.schema;
     if (schema) {
       const makeRef = makeRefBuilder();
-      const type = makeContract(schema, makeRef);
+      const type = makeContract({ component: schema, makeRef });
       return `<${type}>`;
     }
   }

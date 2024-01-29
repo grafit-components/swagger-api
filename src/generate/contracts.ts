@@ -1,13 +1,7 @@
 import { OpenAPIV3 } from 'openapi-types';
-import {
-  makeContract,
-  makeRefBuilder,
-} from '../templates/contracts/contract-template.js';
+import { makeContract, makeRefBuilder } from '../templates/contracts/contract-template.js';
 import { makeImport } from '../templates/contracts/import-template.js';
-import {
-  getContractName,
-  getModuleName,
-} from '../templates/contracts/names-template.js';
+import { getContractName, getModuleName } from '../templates/contracts/names-template.js';
 
 export function makeContracts(document: OpenAPIV3.Document) {
   if (!document.components?.schemas) {
@@ -49,11 +43,11 @@ export function makeContracts(document: OpenAPIV3.Document) {
 
     moduleRaw.schemaNames.forEach((schemaName) => {
       module.content +=
-        makeContract(
-          schemas[schemaName],
+        makeContract({
+          component: schemas[schemaName],
           makeRef,
-          getContractName(schemaName),
-        ) + '\n\n\n';
+          name: getContractName(schemaName),
+        }) + '\n\n\n';
     });
 
     contracts.modules.push(module);

@@ -5,7 +5,7 @@ import { makeContract, makeEnumType, makeStringType } from './contract-template.
 
 describe('contract-template', () => {
   it('Contract. Object', () => {
-    const obj: OpenAPIV3.SchemaObject = {
+    const component: OpenAPIV3.SchemaObject = {
       type: 'object',
       properties: {
         name: {
@@ -36,7 +36,7 @@ describe('contract-template', () => {
       description: 'Изменение поля объекта.',
     };
 
-    const res = makeContract(obj, makeRef);
+    const res = makeContract({ component, makeRef });
 
     const exp = `{
 /** Наименование поля. */

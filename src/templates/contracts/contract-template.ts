@@ -2,12 +2,15 @@ import { OpenAPIV3 } from 'openapi-types';
 import { makeJsDoc } from './js-doc-template.js';
 import { getContractName, getModuleAliasName, getModuleName } from './names-template.js';
 
-export function makeContract(
-  component: OpenAPIV3.ReferenceObject | OpenAPIV3.SchemaObject,
-  makeRef: (component: OpenAPIV3.ReferenceObject) => string,
-  name: string | undefined = undefined,
-  datesAsString = false,
-) {
+export interface MakeContractParam {
+  component: OpenAPIV3.ReferenceObject | OpenAPIV3.SchemaObject;
+  makeRef: (component: OpenAPIV3.ReferenceObject) => string;
+  name?: string;
+  datesAsString?: boolean;
+}
+
+export function makeContract(param: MakeContractParam) {
+  const { component, makeRef, name } = param;
   if ('$ref' in component) {
     return makeRef(component);
   }
@@ -21,7 +24,7 @@ export function makeContract(
         return makeNumberType(component);
       }
     case 'string':
-      return makeStringType(component, datesAsString);
+      return makeStringType(component, param.datesAsString ?? false);
     case 'boolean':
       return makeBooleanType(component);
     case 'array':
@@ -37,7 +40,7 @@ export function makeArrayContract(
   component: OpenAPIV3.ArraySchemaObject,
   makeRef: (component: OpenAPIV3.ReferenceObject) => string,
 ): string {
-  return `${makeContract(component.items, makeRef)}[]`;
+  return `${makeContract({ component: component.items, makeRef })}[]`;
 }
 
 export function makeNumberType(component: OpenAPIV3.BaseSchemaObject) {
@@ -95,7 +98,7 @@ export function makeObject(
     fieldNames.forEach((fieldName) => {
       const fieldComponent = component.properties![fieldName];
       strings.push(makeJsDoc(fieldComponent));
-      strings.push(`${fieldName}: ${makeContract(fieldComponent, makeRef)}\n`);
+      strings.push(`${fieldName}: ${makeContract({ component: fieldComponent, makeRef })}\n`);
     });
   }
 

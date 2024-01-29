@@ -6,7 +6,7 @@ export function getMethodBody(requestBody?: OpenAPIV3.ReferenceObject | OpenAPIV
     const schema = requestBody.content['application/json']?.schema;
     if (schema) {
       const makeRef = makeRefBuilder();
-      return `body: ${makeContract(schema, makeRef)}${requestBody.required ? '' : ' | undefined'}, `;
+      return `body: ${makeContract({ component: schema, makeRef })}${requestBody.required ? '' : ' | undefined'}, `;
     } else if (requestBody.content['multipart/form-data']) {
       return `body: FormData${requestBody.required ? '' : ' | undefined'}, `;
     } else {
