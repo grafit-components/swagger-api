@@ -12,8 +12,7 @@ export interface OptionsPath extends OptionsCommon {
   path: string;
 }
 
-export interface OptionsDoc<DocType extends OpenAPIV3.Document>
-  extends OptionsCommon {
+export interface OptionsDoc<DocType extends OpenAPIV3.Document> extends OptionsCommon {
   /** Specification. */
   doc: DocType;
 }
@@ -38,4 +37,11 @@ export interface OptionsCommon {
    * @default 'api'
    */
   endpointsUrlPrefix?: string;
+
+  /**
+   * Use Enum type script type for enum spec
+   *
+   * @default false
+   */
+  suppressEnumAsObj?: boolean;
 }

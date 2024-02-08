@@ -1,5 +1,5 @@
 import { OpenAPIV3 } from 'openapi-types';
-import { makeEnumType } from './enum-template';
+import { makeEnumAsObjType, makeEnumType } from './enum-template';
 import { makeJsDoc } from './js-doc-template.js';
 import { getContractName, getModuleAliasName, getModuleName } from './names-template.js';
 
@@ -9,6 +9,7 @@ export interface MakeContractParam {
   name?: string;
   datesAsString?: boolean;
   isObjectProp?: boolean;
+  suppressEnumAsObj?: boolean;
 }
 
 export function makeContract(param: MakeContractParam) {
@@ -23,7 +24,11 @@ export function makeContract(param: MakeContractParam) {
     case 'integer':
     case 'number':
       if (component.enum) {
-        return makeEnumType(component, name);
+        if (param.suppressEnumAsObj) {
+          return makeEnumType(component, name);
+        } else {
+          return makeEnumAsObjType(component, name);
+        }
       } else {
         return makeNumberType(component);
       }

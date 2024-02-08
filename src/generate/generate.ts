@@ -28,7 +28,7 @@ export async function generation(options: Options) {
   console.log('Document received');
 
   console.log('Generate contracts');
-  const contracts = makeContracts(document);
+  const contracts = makeContracts(document, options);
 
   if (!options.suppressClearFolder) {
     console.log('Clear output folder');

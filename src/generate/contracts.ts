@@ -2,8 +2,9 @@ import { OpenAPIV3 } from 'openapi-types';
 import { makeContract, makeRefBuilder } from '../templates/contracts/contract-template.js';
 import { makeImport } from '../templates/contracts/import-template.js';
 import { getContractName, getModuleName } from '../templates/contracts/names-template.js';
+import { Options } from './options';
 
-export function makeContracts(document: OpenAPIV3.Document) {
+export function makeContracts(document: OpenAPIV3.Document, options: Options) {
   if (!document.components?.schemas) {
     throw Error('Components not contains in schemas');
   }
@@ -47,6 +48,7 @@ export function makeContracts(document: OpenAPIV3.Document) {
           component: schemas[schemaName],
           makeRef,
           name: getContractName(schemaName),
+          suppressEnumAsObj: options.suppressEnumAsObj,
         }) + '\n\n\n';
     });
 
