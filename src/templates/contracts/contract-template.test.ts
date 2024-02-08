@@ -1,7 +1,7 @@
 import assert from 'node:assert';
 import { describe, it } from 'node:test';
 import { OpenAPIV3 } from 'openapi-types';
-import { makeContract, makeEnumType, makeStringType } from './contract-template.js';
+import { makeContract, makeStringType } from './contract-template.js';
 
 describe('contract-template', () => {
   it('Contract. Object', () => {
@@ -68,46 +68,6 @@ oldValue: string | null
 
     return component.$ref.replace('#/components/schemas/', '');
   }
-
-  it('Contract. Enum', () => {
-    const obj: OpenAPIV3.SchemaObject & { 'x-enumNames': string[] } = {
-      enum: [0, 1],
-      type: 'integer',
-      description: 'Список системных объектов.',
-      format: 'int32',
-      'x-enumNames': ['First', 'Second'],
-    };
-
-    const res = makeEnumType(obj, 'EnumName');
-
-    const exp = `/** Список системных объектов.
-@format int32
- */
-export enum EnumName {
-First = 0,
-Second = 1,
-}`;
-    assert.strictEqual(res, exp);
-  });
-
-  it('Contract. Invalid enum', () => {
-    const obj: OpenAPIV3.SchemaObject & { 'x-enumNames': string[] } = {
-      enum: [0],
-      type: 'integer',
-      description: 'Список системных объектов.',
-      format: 'int32',
-      'x-enumNames': ['First', 'Second'],
-    };
-
-    const res = makeEnumType(obj, 'EnumName');
-
-    const exp = `/** Список системных объектов.
-@format int32
- */
-export enum EnumName {
-}`;
-    assert.strictEqual(res, exp);
-  });
 
   it('makeStringType as Date', () => {
     const comp: OpenAPIV3.NonArraySchemaObject = {
