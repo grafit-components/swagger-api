@@ -44,7 +44,7 @@ export function makeEnumAsObjType(component: OpenAPIV3.BaseSchemaObject, name?: 
   const summaries = (component as { 'x-enumSummaries': string[] })['x-enumSummaries'] ?? [];
   if (!names) {
     values.forEach((value) => {
-      strings.push(`_${value} : ${value},`);
+      strings.push(`"${value}" : ${value},`);
     });
   } else if (values.length === names.length) {
     names.forEach((enumInemName, index) => {

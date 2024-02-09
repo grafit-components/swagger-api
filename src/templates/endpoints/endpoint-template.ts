@@ -37,7 +37,9 @@ export function getMethod(tag: string, operation: TagOperation, endpointsUrlPref
   const params = getMethodParams(operation.operationObject.parameters);
   if (params) {
     const paramInOptions = getQueryParams(operation.operationObject.parameters);
-    optionsArr.push(paramInOptions);
+    if (paramInOptions) {
+      optionsArr.push(paramInOptions);
+    }
   }
 
   const body = getMethodBody(operation.operationObject.requestBody);
