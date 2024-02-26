@@ -10,6 +10,7 @@ import { generation } from './generate/generate.js';
     '--output': String,
     '--path': String,
     '--url': String,
+    '--datesAsString': Boolean,
 
     // Aliases
     '-h': '--help',
@@ -33,11 +34,13 @@ import { generation } from './generate/generate.js';
       await generation({
         path: args['--path'],
         outputFolder: args['--output'],
+        datesAsString: args['--datesAsString'],
       });
     } else if (args['--url']) {
       await generation({
         url: args['--url'],
         outputFolder: args['--output'],
+        datesAsString: args['--datesAsString'],
       });
     } else {
       console.error('Required path or url to specification!');

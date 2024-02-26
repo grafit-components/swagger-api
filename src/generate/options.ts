@@ -44,4 +44,11 @@ export interface OptionsCommon {
    * @default false
    */
   suppressEnumAsObj?: boolean;
+
+  /**
+   * Generate dates as string
+   *
+   * @default false
+   */
+  datesAsString?: boolean;
 }

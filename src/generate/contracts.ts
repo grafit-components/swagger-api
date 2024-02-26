@@ -49,6 +49,7 @@ export function makeContracts(document: OpenAPIV3.Document, options: Options) {
           makeRef,
           name: getContractName(schemaName),
           suppressEnumAsObj: options.suppressEnumAsObj,
+          datesAsString: options.datesAsString,
         }) + '\n\n\n';
     });
 

@@ -37,19 +37,16 @@ export function makeContract(param: MakeContractParam) {
     case 'boolean':
       return makeBooleanType(component);
     case 'array':
-      return makeArrayContract(component, makeRef);
+      return makeArrayContract({ ...param, component, name: undefined });
     case 'object':
-      return makeObject(component, makeRef, name);
+      return makeObject({ ...param, component });
   }
 
   return 'unknown';
 }
 
-export function makeArrayContract(
-  component: OpenAPIV3.ArraySchemaObject,
-  makeRef: (component: OpenAPIV3.ReferenceObject) => string,
-): string {
-  return `${makeContract({ component: component.items, makeRef })}[]`;
+export function makeArrayContract(param: MakeContractParam & { component: OpenAPIV3.ArraySchemaObject }): string {
+  return `${makeContract({ ...param, component: param.component.items })}[]`;
 }
 
 export function makeNumberType(component: OpenAPIV3.BaseSchemaObject) {
@@ -63,13 +60,9 @@ function makeBooleanType(component: OpenAPIV3.NonArraySchemaObject) {
   return `boolean${component?.nullable ? ' | null' : ''}`;
 }
 
-export function makeObject(
-  component: OpenAPIV3.NonArraySchemaObject,
-  makeRef: (component: OpenAPIV3.ReferenceObject) => string,
-  name?: string,
-) {
+export function makeObject(param: MakeContractParam & { component: OpenAPIV3.NonArraySchemaObject }) {
   const strings = [];
-
+  const { component, name } = param;
   if (name) {
     strings.push(makeJsDoc(component));
     strings.push(`export interface ${name} {`);
@@ -82,7 +75,9 @@ export function makeObject(
     fieldNames.forEach((fieldName) => {
       const fieldComponent = component.properties![fieldName];
       strings.push(makeJsDoc(fieldComponent));
-      strings.push(`${fieldName}: ${makeContract({ component: fieldComponent, makeRef, isObjectProp: true })}\n`);
+      strings.push(
+        `${fieldName}: ${makeContract({ ...param, component: fieldComponent, isObjectProp: true, name: undefined })}\n`,
+      );
     });
   }
 

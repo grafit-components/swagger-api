@@ -75,8 +75,8 @@ export enum EnumName {
 @format int32
  */
 export const EnumName = {
-_0 : 0,
-_1 : 1,
+"0" : 0,
+"1" : 1,
 } as const;
 /** Список системных объектов.
 @format int32
