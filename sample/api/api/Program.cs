@@ -2,6 +2,7 @@ using api;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
 using System.Xml.Linq;
+using api.EnumSchemaFilters;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,22 +17,23 @@ builder.Services.AddSwaggerGen(options =>
     options.SwaggerDoc("v1", new OpenApiInfo
     {
         Title = "Sample API",
-        Description = "Для демонстации генерации контрактов.",
     });
 
     options.CustomSchemaIds(type => type.ToString()); 
     
+    options.SchemaFilter<EnumNameSchemaFilter>();
+    
     var currentAssembly = Assembly.GetExecutingAssembly();
     var xmlFiles = currentAssembly.GetReferencedAssemblies()
-        .Union(new AssemblyName[] { currentAssembly.GetName() })
+        .Union(new [] { currentAssembly.GetName() })
         .Select(a => Path.Combine(AppContext.BaseDirectory, $"{a.Name}.xml"))
-        .Where(f => File.Exists(f)).ToArray();
+        .Where(f => File.Exists(f));
 
     foreach (var f in xmlFiles)
     {
         options.IncludeXmlComments(f, includeControllerXmlComments: true);
         var doc = XDocument.Load(f);
-        options.SchemaFilter<EnumsSchemaFilter>(doc);
+        options.SchemaFilter<EnumSummarySchemaFilter>(doc);
     }
 });
 
