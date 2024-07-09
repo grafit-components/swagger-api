@@ -11,6 +11,9 @@ import { generation } from './generate/generate.js';
     '--path': String,
     '--url': String,
     '--datesAsString': Boolean,
+    '--publicApi': Boolean,
+    '--pathIntersection': String,
+    '--contractsPrefix': String,
 
     // Aliases
     '-h': '--help',
@@ -34,13 +37,19 @@ import { generation } from './generate/generate.js';
       await generation({
         path: args['--path'],
         outputFolder: args['--output'],
+        pathIntersection: args['--pathIntersection'],
+        contractsPrefix: args['--contractsPrefix'],
         datesAsString: args['--datesAsString'],
+        publicApi: args['--publicApi'],
       });
     } else if (args['--url']) {
       await generation({
         url: args['--url'],
         outputFolder: args['--output'],
+        pathIntersection: args['--pathIntersection'],
+        contractsPrefix: args['--contractsPrefix'],
         datesAsString: args['--datesAsString'],
+        publicApi: args['--publicApi'],
       });
     } else {
       console.error('Required path or url to specification!');

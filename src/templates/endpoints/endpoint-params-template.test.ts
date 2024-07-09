@@ -1,6 +1,7 @@
 import assert from 'node:assert';
 import { describe, test } from 'node:test';
 import { OpenAPIV3 } from 'openapi-types';
+import { Options } from '../../generate/options';
 import { getJsDocParams, getMethodParams, getQueryParams } from './endpoint-params-template';
 const parameters: (OpenAPIV3.ReferenceObject | OpenAPIV3.ParameterObject)[] = [
   {
@@ -35,6 +36,11 @@ const parameters: (OpenAPIV3.ReferenceObject | OpenAPIV3.ParameterObject)[] = [
   },
 ];
 
+const options: Options = {
+  path: '',
+  outputFolder: '',
+};
+
 describe('endpoint-params-template', () => {
   test('getQueryParams', () => {
     const res = getQueryParams(parameters);
@@ -43,7 +49,7 @@ describe('endpoint-params-template', () => {
   });
 
   test('getMethodParams', () => {
-    const res = getMethodParams(parameters);
+    const res = getMethodParams(options, parameters);
 
     assert.strictEqual(
       res,

@@ -16,7 +16,7 @@ export function makeService(document: OpenAPIV3.Document, options: Options, grou
   groups.forEach((group) => {
     strings.push(
       `${getJsDocForTag(document, group.tag)}
-      ${makeEndpoint(group, options.endpointsUrlPrefix)}
+      ${makeEndpoint(options, group)}
       `,
     );
   });

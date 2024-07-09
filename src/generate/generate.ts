@@ -9,6 +9,7 @@ import { Options } from './options.js';
 
 export async function generation(options: Options) {
   let document: OpenAPIV3.Document | undefined;
+  let documentIntersection: OpenAPIV3.Document | undefined;
 
   if ('url' in options) {
     console.log('Download document from ' + options.url);
@@ -27,8 +28,16 @@ export async function generation(options: Options) {
   checkDocument(document);
   console.log('Document received');
 
+  if ('pathIntersection' in options && options.pathIntersection !== undefined) {
+    documentIntersection = await getDocumentByPath(options.pathIntersection);
+    if (!documentIntersection) {
+      throw 'Error while getting document intersection';
+    }
+    checkDocument(documentIntersection);
+  }
+
   console.log('Generate contracts');
-  const contracts = makeContracts(document, options);
+  const contracts = makeContracts(options, document, documentIntersection);
 
   if (!options.suppressClearFolder) {
     console.log('Clear output folder');
@@ -43,16 +52,27 @@ export async function generation(options: Options) {
   }
   console.log(`Saved ${contracts.modules.length} modules`);
 
-  console.log('Generate api service');
-  const apiServiceRaw = makeEndpoints(document, options);
-  const apiServiceWithImport = `${contracts.importsAll}\n${apiServiceRaw}`;
-  const apiServiceFormatted = await codeFormat(apiServiceWithImport);
-  const serviceName = path.join(
-    options.outputFolder,
-    toKebabCase(`${options.endpointsServiceName ?? 'api'}.service.ts`),
-  );
-  console.log('Save api service');
-  await saveFile(serviceName, apiServiceFormatted);
+  if (options.publicApi) {
+    console.log('Save public api');
+    const content = await codeFormat(contracts.exportsAll);
+    const fileName = path.join(options.outputFolder, `public-api.ts`);
+    await saveFile(fileName, content);
+  }
+
+  if (documentIntersection === undefined) {
+    console.log('Generate api service');
+    const apiServiceRaw = makeEndpoints(document, options);
+    const apiServiceWithImport = `${contracts.importsAll}\n${apiServiceRaw}`;
+    const apiServiceFormatted = await codeFormat(apiServiceWithImport);
+    const serviceName = path.join(
+      options.outputFolder,
+      toKebabCase(`${options.endpointsServiceName ?? 'api'}.service.ts`),
+    );
+    console.log('Save api service');
+    await saveFile(serviceName, apiServiceFormatted);
+  } else {
+    console.log(`Skip generating api service`);
+  }
 
   console.log('Completed');
 }

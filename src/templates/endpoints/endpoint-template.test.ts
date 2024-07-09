@@ -2,11 +2,17 @@ import assert from 'node:assert';
 import { describe, it } from 'node:test';
 import { OpenAPIV3 } from 'openapi-types';
 import { TagGroupItem } from '../../generate/endpoints';
+import { Options } from '../../generate/options';
 import { makeEndpoint } from './endpoint-template';
 import HttpMethods = OpenAPIV3.HttpMethods;
+
 describe('names-template', () => {
   it('makeEndpoint', () => {
-    const res = makeEndpoint(testGroup);
+    const options: Options = {
+      path: '',
+      outputFolder: '',
+    };
+    const res = makeEndpoint(options, testGroup);
 
     assert.strictEqual(
       res,

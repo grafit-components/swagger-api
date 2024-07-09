@@ -1,4 +1,5 @@
 import { OpenAPIV3 } from 'openapi-types';
+import { Options } from '../../generate/options';
 import { makeEnumAsObjType, makeEnumType } from './enum-template';
 import { makeJsDoc } from './js-doc-template.js';
 import { getContractName, getModuleAliasName, getModuleName } from './names-template.js';
@@ -90,7 +91,10 @@ export function makeObject(param: MakeContractParam & { component: OpenAPIV3.Non
   return strings.join('\n');
 }
 
-export function makeRefBuilder(moduleName?: string): (component: OpenAPIV3.ReferenceObject) => string {
+export function makeRefBuilder(
+  options: Options,
+  moduleName?: string,
+): (component: OpenAPIV3.ReferenceObject) => string {
   return (component: OpenAPIV3.ReferenceObject) => {
     const base = '#/components/schemas/';
     if (!component.$ref.startsWith(base)) {
@@ -98,7 +102,7 @@ export function makeRefBuilder(moduleName?: string): (component: OpenAPIV3.Refer
     }
     const schemaName = component.$ref.replace(base, '');
 
-    const contractName = getContractName(schemaName);
+    const contractName = getContractName(schemaName, options);
     if (moduleName && moduleName === getModuleName(schemaName)) {
       return contractName;
     } else {

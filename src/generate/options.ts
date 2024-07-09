@@ -10,6 +10,9 @@ export interface OptionsUrl extends OptionsCommon {
 export interface OptionsPath extends OptionsCommon {
   /** Path to swagger.json. */
   path: string;
+
+  /** Path to swagger.json of intersection models. */
+  pathIntersection?: string;
 }
 
 export interface OptionsDoc<DocType extends OpenAPIV3.Document> extends OptionsCommon {
@@ -38,6 +41,9 @@ export interface OptionsCommon {
    */
   endpointsUrlPrefix?: string;
 
+  /** Contract name prefix. */
+  contractsPrefix?: string;
+
   /**
    * Use Enum type script type for enum spec
    *
@@ -51,4 +57,7 @@ export interface OptionsCommon {
    * @default false
    */
   datesAsString?: boolean;
+
+  /** Generate export all modules file. */
+  publicApi?: boolean;
 }
