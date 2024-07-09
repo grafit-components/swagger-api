@@ -11,6 +11,7 @@ import { generation } from './generate/generate.js';
     '--path': String,
     '--url': String,
     '--datesAsString': Boolean,
+    '--publicApi': Boolean,
     '--pathIntersection': String,
     '--contractsPrefix': String,
 
@@ -39,6 +40,7 @@ import { generation } from './generate/generate.js';
         pathIntersection: args['--pathIntersection'],
         contractsPrefix: args['--contractsPrefix'],
         datesAsString: args['--datesAsString'],
+        publicApi: args['--publicApi'],
       });
     } else if (args['--url']) {
       await generation({
@@ -47,6 +49,7 @@ import { generation } from './generate/generate.js';
         pathIntersection: args['--pathIntersection'],
         contractsPrefix: args['--contractsPrefix'],
         datesAsString: args['--datesAsString'],
+        publicApi: args['--publicApi'],
       });
     } else {
       console.error('Required path or url to specification!');

@@ -57,4 +57,7 @@ export interface OptionsCommon {
    * @default false
    */
   datesAsString?: boolean;
+
+  /** Generate export all modules file. */
+  publicApi?: boolean;
 }

@@ -52,6 +52,13 @@ export async function generation(options: Options) {
   }
   console.log(`Saved ${contracts.modules.length} modules`);
 
+  if (options.publicApi) {
+    console.log('Save public api');
+    const content = await codeFormat(contracts.exportsAll);
+    const fileName = path.join(options.outputFolder, `public-api.ts`);
+    await saveFile(fileName, content);
+  }
+
   if (documentIntersection === undefined) {
     console.log('Generate api service');
     const apiServiceRaw = makeEndpoints(document, options);

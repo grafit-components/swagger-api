@@ -1,6 +1,6 @@
 import { OpenAPIV3 } from 'openapi-types';
 import { makeContract, makeRefBuilder } from '../templates/contracts/contract-template.js';
-import { makeImport } from '../templates/contracts/import-template.js';
+import { makeExport, makeImport } from '../templates/contracts/import-template.js';
 import { getContractName, getModuleName } from '../templates/contracts/names-template.js';
 import { Options } from './options';
 
@@ -21,6 +21,7 @@ export function makeContracts(
   const schemaNames = Object.keys(schemas).filter((name) => schemasIntersectionNames.includes(name));
   const contracts: Contracts = {
     importsAll: '',
+    exportsAll: '',
     modules: [],
   };
 
@@ -37,6 +38,7 @@ export function makeContracts(
           schemaNames: [schemaName],
         });
         contracts.importsAll += makeImport(moduleName, schemaName);
+        contracts.exportsAll += makeExport(moduleName);
       }
       return modules;
     },
@@ -74,5 +76,6 @@ interface Module {
 
 interface Contracts {
   importsAll: string;
+  exportsAll: string;
   modules: Module[];
 }
