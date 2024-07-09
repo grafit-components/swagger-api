@@ -1,9 +1,14 @@
 import assert from 'node:assert';
 import { describe, test } from 'node:test';
 import { OpenAPIV3 } from 'openapi-types';
+import { Options } from '../../generate/options';
 import { getJsDocBody, getMethodBody } from './endpoint-body-template';
 describe('endpoint-body-template', () => {
   test('getMethodBody From', () => {
+    const options: Options = {
+      path: '',
+      outputFolder: '',
+    };
     const formBody: OpenAPIV3.RequestBodyObject = {
       content: {
         'multipart/form-data': {
@@ -61,13 +66,17 @@ describe('endpoint-body-template', () => {
       },
     };
 
-    const res = getMethodBody(formBody);
+    const res = getMethodBody(options, formBody);
 
     assert.strictEqual(res, 'body: FormData | undefined, ');
   });
 
   test('getMethodBody Obj', () => {
-    const res = getMethodBody(objBody);
+    const options: Options = {
+      path: '',
+      outputFolder: '',
+    };
+    const res = getMethodBody(options, objBody);
 
     assert.strictEqual(res, 'body: ItskErWebApiRequestsBrigadeEquipmentArgs.BrigadeEquipmentKindAddArgs | undefined, ');
   });

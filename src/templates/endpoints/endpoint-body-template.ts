@@ -1,11 +1,15 @@
 import { OpenAPIV3 } from 'openapi-types';
+import { Options } from '../../generate/options';
 import { makeContract, makeRefBuilder } from '../contracts/contract-template';
 
-export function getMethodBody(requestBody?: OpenAPIV3.ReferenceObject | OpenAPIV3.RequestBodyObject | undefined) {
+export function getMethodBody(
+  options: Options,
+  requestBody?: OpenAPIV3.ReferenceObject | OpenAPIV3.RequestBodyObject | undefined,
+) {
   if (requestBody && !('$ref' in requestBody)) {
     const schema = requestBody.content['application/json']?.schema;
     if (schema) {
-      const makeRef = makeRefBuilder();
+      const makeRef = makeRefBuilder(options);
       return `body: ${makeContract({ component: schema, makeRef })}${requestBody.required ? '' : ' | undefined'}, `;
     } else if (requestBody.content['multipart/form-data']) {
       return `body: FormData${requestBody.required ? '' : ' | undefined'}, `;

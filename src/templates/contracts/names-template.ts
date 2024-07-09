@@ -1,3 +1,4 @@
+import { Options } from '../../generate/options';
 import { toKebabCase, toPascalCase } from '../../utils/string-converters.js';
 
 export function getModuleAliasName(schemaName: string) {
@@ -12,7 +13,7 @@ export function getModuleName(schemaName: string) {
   return toKebabCase(paths.join('.'));
 }
 
-export function getContractName(schemaName: string): string {
+export function getContractName(schemaName: string, options: Options): string {
   const generics = schemaName.split('`');
   const name = generics.shift()!.split('.').pop()!;
 
@@ -22,11 +23,13 @@ export function getContractName(schemaName: string): string {
 
   generics.unshift(name);
 
-  return generics
+  const saveName = generics
     .join('_')
     .replace(/,/g, '_')
     .replace(/\]/g, '')
     .replace(/\[/g, 'Of')
     .replace(/\./g, '')
     .replace(/\+/g, '');
+
+  return `${options.contractsPrefix ?? ''}${saveName}`;
 }

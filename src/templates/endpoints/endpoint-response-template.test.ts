@@ -1,15 +1,20 @@
 import assert from 'node:assert';
 import { describe, test } from 'node:test';
 import { OpenAPIV3 } from 'openapi-types';
+import { Options } from '../../generate/options';
 import { getMethodType } from './endpoint-response-template';
 describe('endpoint-response-template', () => {
+  const options: Options = {
+    path: '',
+    outputFolder: '',
+  };
   test('getMethodType', () => {
-    const res = getMethodType(response);
+    const res = getMethodType(options, response);
     assert.strictEqual(res, '<ItskErGrafitAbstractionsModels.GtFileInfo>');
   });
 
   test('getMethodType Str', () => {
-    const res = getMethodType(responseStr);
+    const res = getMethodType(options, responseStr);
     assert.strictEqual(res, '<string>');
   });
 

@@ -4,13 +4,21 @@ import { makeImport } from '../templates/contracts/import-template.js';
 import { getContractName, getModuleName } from '../templates/contracts/names-template.js';
 import { Options } from './options';
 
-export function makeContracts(document: OpenAPIV3.Document, options: Options) {
+export function makeContracts(
+  options: Options,
+  document: OpenAPIV3.Document,
+  documentIntersection: OpenAPIV3.Document | undefined,
+) {
   if (!document.components?.schemas) {
     throw Error('Components not contains in schemas');
   }
-  const schemas = document.components.schemas;
 
-  const schemaNames = Object.keys(schemas);
+  const schemas = document.components.schemas;
+  const schemasIntersectionNames = documentIntersection?.components?.schemas
+    ? Object.keys(documentIntersection.components.schemas)
+    : [];
+
+  const schemaNames = Object.keys(schemas).filter((name) => schemasIntersectionNames.includes(name));
   const contracts: Contracts = {
     importsAll: '',
     modules: [],
@@ -36,7 +44,7 @@ export function makeContracts(document: OpenAPIV3.Document, options: Options) {
   );
 
   modulesRaw.forEach((moduleRaw) => {
-    const makeRef = makeRefBuilder(moduleRaw.name);
+    const makeRef = makeRefBuilder(options, moduleRaw.name);
     const module: Module = {
       name: moduleRaw.name,
       content: contracts.importsAll,
@@ -47,7 +55,7 @@ export function makeContracts(document: OpenAPIV3.Document, options: Options) {
         makeContract({
           component: schemas[schemaName],
           makeRef,
-          name: getContractName(schemaName),
+          name: getContractName(schemaName, options),
           suppressEnumAsObj: options.suppressEnumAsObj,
           datesAsString: options.datesAsString,
         }) + '\n\n\n';

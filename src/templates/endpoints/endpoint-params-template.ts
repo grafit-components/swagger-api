@@ -1,4 +1,5 @@
 import { OpenAPIV3 } from 'openapi-types';
+import { Options } from '../../generate/options';
 import { makeContract, makeRefBuilder } from '../contracts/contract-template';
 
 export function getQueryParams(parameters?: (OpenAPIV3.ReferenceObject | OpenAPIV3.ParameterObject)[]) {
@@ -11,11 +12,14 @@ export function getQueryParams(parameters?: (OpenAPIV3.ReferenceObject | OpenAPI
   return params.length ? `params: new HttpParams({ fromObject: { ${params.join(', ')} } })` : '';
 }
 
-export function getMethodParams(parameters?: (OpenAPIV3.ReferenceObject | OpenAPIV3.ParameterObject)[]) {
+export function getMethodParams(
+  options: Options,
+  parameters?: (OpenAPIV3.ReferenceObject | OpenAPIV3.ParameterObject)[],
+) {
   if (!parameters?.length) {
     return '';
   }
-  const makeRef = makeRefBuilder();
+  const makeRef = makeRefBuilder(options);
 
   return parameters
     .map((param) => {
