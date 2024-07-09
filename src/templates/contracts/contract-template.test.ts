@@ -90,4 +90,32 @@ oldValue: string | null
 
     assert.strictEqual(res, 'string');
   });
+
+  it('makeArrayContract', () => {
+    const component: OpenAPIV3.SchemaObject = {
+      type: 'object',
+      properties: {
+        state: {
+          type: 'array',
+          items: {
+            $ref: '#/components/schemas/Itsk.ER.Approval.Abstractions.ApprovalHistoryItem',
+          },
+          description: 'Текущее состояние согласования.',
+          nullable: true,
+        },
+      },
+      additionalProperties: false,
+      description: 'Сводная информация о согласовании.',
+    };
+
+    const res = makeContract({ component, makeRef });
+
+    const exp = `{
+/** Текущее состояние согласования. */
+state: Itsk.ER.Approval.Abstractions.ApprovalHistoryItem[]
+
+}`;
+
+    assert.strictEqual(res, exp);
+  });
 });

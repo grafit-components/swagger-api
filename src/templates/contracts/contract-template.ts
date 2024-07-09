@@ -47,7 +47,7 @@ export function makeContract(param: MakeContractParam) {
 }
 
 export function makeArrayContract(param: MakeContractParam & { component: OpenAPIV3.ArraySchemaObject }): string {
-  return `${makeContract({ ...param, component: param.component.items })}[]`;
+  return `${makeContract({ ...param, component: param.component.items, isObjectProp: false })}[]`;
 }
 
 export function makeNumberType(component: OpenAPIV3.BaseSchemaObject) {
