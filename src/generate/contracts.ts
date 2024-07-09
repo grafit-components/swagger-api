@@ -14,11 +14,14 @@ export function makeContracts(
   }
 
   const schemas = document.components.schemas;
-  const schemasIntersectionNames = documentIntersection?.components?.schemas
-    ? Object.keys(documentIntersection.components.schemas)
-    : [];
 
-  const schemaNames = Object.keys(schemas).filter((name) => schemasIntersectionNames.includes(name));
+  let schemaNames = Object.keys(schemas);
+
+  if (documentIntersection !== undefined && documentIntersection.components?.schemas) {
+    const schemasIntersectionNames = new Set(Object.keys(documentIntersection.components.schemas));
+    schemaNames = Object.keys(schemas).filter((name) => schemasIntersectionNames.has(name));
+  }
+
   const contracts: Contracts = {
     importsAll: '',
     exportsAll: '',
