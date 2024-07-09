@@ -20,13 +20,13 @@
   "dependencies": {
     "prettier": "^3.1.0",
     "prettier-plugin-jsdoc": "^1.1.1",
-    "prettier-plugin-organize-imports": "^3.2.4"
+    "prettier-plugin-organize-imports": "^3.2.4",
+    "arg": "^5.0.2"
   },
   "devDependencies": {
     "@types/node": "^20.10.2",
     "@typescript-eslint/eslint-plugin": "^6.13.1",
     "@typescript-eslint/parser": "^6.13.1",
-    "arg": "^5.0.2",
     "eslint": "^8.55.0",
     "glob": "^10.3.10",
     "nodemon": "^3.0.2",
@@ -48,10 +48,7 @@
     "typescript",
     "api",
     "angular",
-    "grafit",
-    "gt",
-    "codegen",
-    "generation"
+    "grafit"
   ],
   "engines": {
     "node": ">=18.10.0",
