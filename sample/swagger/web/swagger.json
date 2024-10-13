@@ -18,7 +18,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/api.Controllers.NewsItem"
+                    "$ref": "#/components/schemas/Library.News.NewsItem"
                   }
                 }
               },
@@ -26,7 +26,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/api.Controllers.NewsItem"
+                    "$ref": "#/components/schemas/Library.News.NewsItem"
                   }
                 }
               },
@@ -34,7 +34,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/api.Controllers.NewsItem"
+                    "$ref": "#/components/schemas/Library.News.NewsItem"
                   }
                 }
               }
@@ -57,7 +57,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/api.WeatherForecast"
+                    "$ref": "#/components/schemas/Library.Weather.WeatherForecast"
                   }
                 }
               },
@@ -65,7 +65,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/api.WeatherForecast"
+                    "$ref": "#/components/schemas/Library.Weather.WeatherForecast"
                   }
                 }
               },
@@ -73,7 +73,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/api.WeatherForecast"
+                    "$ref": "#/components/schemas/Library.Weather.WeatherForecast"
                   }
                 }
               }
@@ -85,21 +85,85 @@
   },
   "components": {
     "schemas": {
-      "api.Controllers.NewsItem": {
+      "Library.News.NewsItem": {
         "type": "object",
         "properties": {
-          "id": {
-            "type": "integer",
-            "format": "int32"
-          },
           "title": {
             "type": "string",
+            "description": "Заголовок.",
+            "nullable": true
+          },
+          "text": {
+            "type": "string",
+            "description": "Текст.",
+            "nullable": true
+          },
+          "summary": {
+            "$ref": "#/components/schemas/Library.News.Summary"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Новость."
+      },
+      "Library.News.Summary": {
+        "type": "object",
+        "properties": {
+          "annotation": {
+            "type": "string",
+            "description": "Аннотация.",
+            "nullable": true
+          },
+          "author": {
+            "type": "string",
+            "description": "Автор.",
             "nullable": true
           }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "Описание новости."
       },
-      "api.WeatherForecast": {
+      "Library.Weather.Summary": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "$ref": "#/components/schemas/Library.Weather.SummaryType"
+          },
+          "description": {
+            "type": "string",
+            "description": "Описание.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Описание погоды."
+      },
+      "Library.Weather.SummaryType": {
+        "enum": [
+          0,
+          1,
+          2,
+          2,
+          3
+        ],
+        "type": "integer",
+        "description": "Тип погоды.",
+        "format": "int32",
+        "x-enumNames": [
+          "Freezing",
+          "Cool",
+          "Mild",
+          "Warm",
+          "Hot"
+        ],
+        "x-enumSummaries": [
+          "Морозно.",
+          "Холодно",
+          "Мягкая погода.",
+          "Тепло.",
+          "Жарко."
+        ]
+      },
+      "Library.Weather.WeatherForecast": {
         "type": "object",
         "properties": {
           "date": {
@@ -114,12 +178,12 @@
           },
           "temperatureF": {
             "type": "integer",
+            "description": "Температура по шкале Фаренгейта.",
             "format": "int32",
             "readOnly": true
           },
           "summary": {
-            "type": "string",
-            "nullable": true
+            "$ref": "#/components/schemas/Library.Weather.Summary"
           }
         },
         "additionalProperties": false,

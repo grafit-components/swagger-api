@@ -10,9 +10,22 @@
  * --------------------------------------------------------------
  */
 
+/** Новость. */
 export interface NewsItem {
-  /** @format int32 */
-  id: number;
-
+  /** Заголовок. */
   title: string | null;
+
+  /** Текст. */
+  text: string | null;
+
+  summary: Summary | null;
+}
+
+/** Описание новости. */
+export interface Summary {
+  /** Аннотация. */
+  annotation: string | null;
+
+  /** Автор. */
+  author: string | null;
 }

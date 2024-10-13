@@ -10,6 +10,42 @@
  * --------------------------------------------------------------
  */
 
+/** Описание погоды. */
+export interface Summary {
+  type: SummaryType | null;
+
+  /** Описание. */
+  description: string | null;
+}
+
+/**
+ * Тип погоды.
+ *
+ * @format int32
+ */
+export const SummaryType = {
+  /** Морозно. */
+  Freezing: 0,
+
+  /** Холодно */
+  Cool: 1,
+
+  /** Мягкая погода. */
+  Mild: 2,
+
+  /** Тепло. */
+  Warm: 3,
+
+  /** Жарко. */
+  Hot: 4,
+} as const;
+/**
+ * Тип погоды.
+ *
+ * @format int32
+ */
+export type SummaryType = (typeof SummaryType)[keyof typeof SummaryType];
+
 /** Данные о погоде. */
 export interface WeatherForecast {
   /**
@@ -26,8 +62,12 @@ export interface WeatherForecast {
    */
   temperatureC: number;
 
-  /** @format int32 */
+  /**
+   * Температура по шкале Фаренгейта.
+   *
+   * @format int32
+   */
   temperatureF: number;
 
-  summary: string | null;
+  summary: Summary | null;
 }

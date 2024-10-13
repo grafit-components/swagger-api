@@ -6,7 +6,7 @@ import { makeEndpoint } from './endpoint-template';
 export function makeService(document: OpenAPIV3.Document, options: Options, groups: TagGroupItem[]) {
   const strings = [
     `import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-     import { Injectable } from '@angular/core';
+     import { inject, Injectable } from '@angular/core';
      
     ${getJsDocForDocument(document)}
     @Injectable({ providedIn: 'root' })
@@ -21,10 +21,10 @@ export function makeService(document: OpenAPIV3.Document, options: Options, grou
     );
   });
 
-  strings.push(`noCacheHeaders = new HttpHeaders({
+  strings.push(`private readonly noCacheHeaders = new HttpHeaders({
                     'Cache-Control': 'no-cache', Pragma: 'no-cache', Expires: 'Sat, 01 Jan 2000 00:00:00 GMT',
                 });
-  constructor(private http: HttpClient) {}    }
+  private readonly http = inject(HttpClient);    }
   
   export interface Options {
       observe?: 'body' | 'events' | 'response';

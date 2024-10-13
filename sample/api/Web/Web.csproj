@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+	<GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Library\Library.csproj" />
+  </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Condition=" '$(OS)' == 'Windows_NT' " Command="dotnet tool restore --tool-manifest .config/dotnet-tools.json" />
+    <Exec Condition=" '$(OS)' == 'Windows_NT' " Command="dotnet swagger tofile --output $(SolutionDir)..\swagger\web\swagger.json $(TargetDir)$(TargetFileName) v1" />
+
+    <Exec Condition=" '$(OS)' == 'Unix' " Command="dotnet tool restore --tool-manifest .config/dotnet-tools.json" />
+    <Exec Condition=" '$(OS)' == 'Unix' " Command="swagger tofile --output $(SolutionDir)/../swagger/web/swagger.json $(TargetDir)$(TargetFileName) v1" />
+  </Target>
+
+</Project>

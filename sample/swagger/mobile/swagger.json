@@ -1,0 +1,118 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Sample API"
+  },
+  "paths": {
+    "/WeatherForecast": {
+      "get": {
+        "tags": [
+          "WeatherForecast"
+        ],
+        "operationId": "GetWeatherForecast",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Library.Weather.WeatherForecast"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Library.Weather.WeatherForecast"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Library.Weather.WeatherForecast"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Library.Weather.Summary": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "$ref": "#/components/schemas/Library.Weather.SummaryType"
+          },
+          "description": {
+            "type": "string",
+            "description": "Описание.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Описание погоды."
+      },
+      "Library.Weather.SummaryType": {
+        "enum": [
+          0,
+          1,
+          2,
+          2,
+          3
+        ],
+        "type": "integer",
+        "description": "Тип погоды.",
+        "format": "int32",
+        "x-enumNames": [
+          "Freezing",
+          "Cool",
+          "Mild",
+          "Warm",
+          "Hot"
+        ],
+        "x-enumSummaries": [
+          "Морозно.",
+          "Холодно",
+          "Мягкая погода.",
+          "Тепло.",
+          "Жарко."
+        ]
+      },
+      "Library.Weather.WeatherForecast": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "description": "Дата.",
+            "format": "date-time"
+          },
+          "temperatureC": {
+            "type": "integer",
+            "description": "Температура в градусах.",
+            "format": "int32"
+          },
+          "temperatureF": {
+            "type": "integer",
+            "description": "Температура по шкале Фаренгейта.",
+            "format": "int32",
+            "readOnly": true
+          },
+          "summary": {
+            "$ref": "#/components/schemas/Library.Weather.Summary"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Данные о погоде."
+      }
+    }
+  }
+}
